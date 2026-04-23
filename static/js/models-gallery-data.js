@@ -1,0 +1,1 @@
+window.MODELS_GALLERY_DATA = [];

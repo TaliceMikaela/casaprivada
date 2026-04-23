@@ -3,11 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teste de Commit</title>
+  <title>Casa dos Prazeres | Privé Lounge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css" />
 </head>
 <body>
-  <h1>Teste de Commit no Repositório</h1>
-  <p>Se esta página apareceu, o commit e o deploy estão funcionando.</p>
-  <p>Arquivo index.html criado apenas para validação.</p>
+  <div id="securityOverlay" class="security-overlay hidden" aria-hidden="true">
+    <div class="security-overlay-box glass">
+      <strong>Proteção visual ativada</strong>
+      <p>O site tentou bloquear uma ação de cópia ou captura. Isso não impede 100%, mas dificulta bastante.</p>
+    </div>
+  </div>
+
+  <div id="ageGate" class="age-gate" aria-hidden="false">
+    <div class="age-gate-backdrop"></div>
+    <div class="age-gate-panel glass" role="dialog" aria-modal="true" aria-label="Verificação de maioridade">
+      <p class="eyebrow">Acesso restrito</p>
+      <h2>Você tem 18 anos ou mais?</h2>
+      <p class="muted">Este site contém conteúdo destinado exclusivamente a maiores de idade. Ao continuar, você declara ser maior de 18 anos.</p>
+      <div class="age-gate-actions">
+        <button id="ageConfirmBtn" class="btn btn-primary" type="button">Sim, sou maior de 18</button>
+        <a id="ageDenyBtn" class="btn btn-secondary" href="https://www.google.com" rel="noopener noreferrer">Não</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <nav class="nav container">
+      <div class="brand">
+        <img class="brand-logo" src="static/img/logo-casa-dos-prazeres.png" alt="Logo Casa dos Prazeres Privé Lounge" />
+        <div>
+          <strong>Casa dos Prazeres</strong>
+          <small>Privé Lounge</small>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#sobre">Sobre</a>
+        <a href="#conheca-casa">Conheça a casa</a>
+        <a href="#modelos">Modelos</a>
+      </div>
+    </nav>
+
+    <section class="hero-content container">
+      <div class="hero-copy">
+        <p class="eyebrow">Sofisticação. Privacidade. Discrição.</p>
+        <h1 class="hero-title">Elegância, conforto e discrição.</h1>
+        <p class="hero-teaser">Um lugar que se revela aos poucos.</p>
+        <p class="lead">
+          A <strong>Casa dos Prazeres Privé Lounge</strong> oferece um ambiente refinado, com espaços exclusivos, atmosfera envolvente e uma experiência marcada por sigilo, descrição e alto padrão.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#sobre">Conhecer a casa</a>
+          <a class="btn btn-secondary" href="#conheca-casa">Ver ambiente</a>
+          <a class="btn btn-outline" href="#modelos">Ver modelos</a>
+        </div>
+      </div>
+      <div class="hero-panel glass">
+        <h3>Ambiente reservado</h3>
+        <ol>
+          <li>Estrutura pensada para conforto, privacidade e exclusividade.</li>
+          <li>Espaços privativos e coletivos em um mesmo ambiente.</li>
+          <li>Bar com atendimento de qualidade e clima sofisticado.</li>
+          <li>Experiência marcada por descrição, respeito e sigilo.</li>
+        </ol>
+        <p class="warning">
+          A galeria do ambiente agora funciona direto pelo repositório: você coloca as imagens na pasta do projeto, versiona no Git e publica no servidor.
+        </p>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="sobre" class="section container">
+      <div class="section-title">
+        <p class="eyebrow">Sobre a casa</p>
+        <h2>Privacidade, elegância e uma experiência conduzida com discrição</h2>
+      </div>
+      <div class="info-grid">
+        <article class="card">
+          <h3>Ambiente sofisticado</h3>
+          <p>A casa foi pensada para oferecer uma atmosfera elegante, confortável e envolvente, com espaços que valorizam exclusividade e bem-estar em cada detalhe.</p>
+        </article>
+        <article class="card">
+          <h3>Espaços privé e coletivos</h3>
+          <p>Nossa estrutura reúne ambientes reservados e áreas de convivência, criando o equilíbrio entre privacidade, conforto e uma experiência social em alto nível.</p>
+        </article>
+        <article class="card">
+          <h3>Bar, sigilo e descrição</h3>
+          <p>Além de um ótimo bar com bebidas selecionadas, a casa tem como essência o atendimento com sigilo, discrição e respeito, preservando a privacidade de todos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="conheca-casa" class="section container protect-area public-gallery-section">
+      <div class="gallery-head public-gallery-head">
+        <div>
+          <p class="eyebrow">Conheça a casa</p>
+          <h2>Ambientes da casa</h2>
+          <p class="muted section-note">Fotos públicas do ambiente. Toque ou clique para ampliar sem distorcer.</p>
+        </div>
+        <span class="badge badge-soft">Galeria pública protegida</span>
+      </div>
+
+      <div id="publicGalleryEmpty" class="empty-state glass hidden">
+        Nenhuma foto do ambiente foi publicada ainda. Adicione as imagens em <strong>static/img/casa</strong> e atualize o arquivo <strong>static/js/house-gallery-data.js</strong>.
+      </div>
+
+      <div id="publicGalleryGrid" class="public-gallery-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="modelos" class="section container protect-area models-section">
+      <div class="gallery-head public-gallery-head">
+        <div>
+          <p class="eyebrow">Modelos</p>
+          <h2>Galeria de modelos</h2>
+          <p class="muted section-note"><strong>Em construção.</strong> Esta área será publicada quando as modelos forem cadastradas.</p>
+
+        </div>
+        <span class="badge badge-soft">Em construção</span>
+      </div>
+
+      <div id="modelsEmpty" class="empty-state glass hidden">
+Galeria de modelos em construção. Em breve esta área receberá os perfis individuais.
+      </div>
+
+      <div id="modelsGrid" class="public-gallery-grid models-public-grid" aria-live="polite"></div>
+
+      <section id="modelGalleryPanel" class="model-gallery-panel glass hidden" aria-live="polite">
+        <div class="model-gallery-header">
+          <div class="model-gallery-copy">
+            <p class="eyebrow">Galeria individual</p>
+            <h3 id="modelGalleryTitle">Nome da modelo</h3>
+            <p id="modelGalleryMeta" class="muted"></p>
+            <p id="modelGalleryDescription" class="muted"></p>
+          </div>
+          <div class="model-gallery-actions">
+            <button id="backToModelsBtn" class="btn btn-secondary btn-small" type="button">Voltar para a grade</button>
+          </div>
+        </div>
+        <div id="modelGalleryGrid" class="public-gallery-grid model-photos-grid"></div>
+      </section>
+    </section>
+
+  </main>
+
+  <div id="eventPopup" class="event-popup hidden" aria-hidden="true">
+    <div class="event-popup-backdrop" data-close-event-popup="true"></div>
+    <div class="event-popup-panel glass" role="dialog" aria-modal="true" aria-label="Evento em destaque">
+      <button id="closeEventPopupBtn" class="event-popup-close" type="button" aria-label="Fechar popup do evento">×</button>
+      <div class="event-popup-content">
+        <div class="event-popup-copy">
+          <p class="eyebrow">Evento em destaque</p>
+          <h3>Noite das Coelhinhas</h3>
+          <p class="muted">10/05 • Evento especial da casa</p>
+          <p>Confira o banner do evento e faça sua confirmação antecipada pelo WhatsApp.</p>
+          <div class="event-popup-actions">
+            <a class="btn btn-primary" href="https://wa.me/5545920016271" target="_blank" rel="noopener noreferrer">Confirmar presença</a>
+            <button id="dismissEventPopupBtn" class="btn btn-secondary" type="button">Fechar</button>
+          </div>
+        </div>
+        <button class="event-popup-image-wrap" type="button" id="openEventBannerBtn" aria-label="Ampliar banner do evento">
+          <img src="static/img/eventos/evento-noite-das-coelhinhas-2026-05-10-casa-dos-prazeres-prive-lounge.png" alt="Banner do evento Noite das Coelhinhas da Casa dos Prazeres Privé Lounge" loading="eager" draggable="false" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="lightboxModal" class="lightbox hidden" aria-hidden="true">
+    <div class="lightbox-backdrop" data-close-lightbox="true"></div>
+    <div class="lightbox-panel glass" role="dialog" aria-modal="true" aria-label="Visualização ampliada da foto do ambiente">
+      <button id="closeLightboxBtn" class="lightbox-close" type="button" aria-label="Fechar">×</button>
+      <div class="lightbox-image-wrap gallery-watermark">
+        <img id="lightboxImage" class="lightbox-image" src="" alt="" draggable="false" />
+      </div>
+      <div class="lightbox-caption">
+        <h3 id="lightboxTitle"></h3>
+        <p id="lightboxDescription"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/js/auth.js"></script>
+  <script src="static/js/house-gallery-data.js"></script>
+  <script src="static/js/models-gallery-data.js"></script>
+  <script src="static/js/main.js"></script>
 </body>
 </html>
