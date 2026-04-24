@@ -116,58 +116,121 @@ function closeLightbox() {
 }
 
 function enableImageProtection() {
+  let longPressTimer = null;
+
+  const isProtectedTarget = (target) => Boolean(
+    target?.closest?.('.protect-area') ||
+    target?.closest?.('.lightbox') ||
+    target?.closest?.('.event-popup')
+  );
+
+  const clearLongPressTimer = () => {
+    if (!longPressTimer) return;
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  };
+
   document.addEventListener('contextmenu', (event) => {
-    if (event.target.closest('.protect-area') || event.target.closest('.lightbox')) {
+    if (isProtectedTarget(event.target)) {
       event.preventDefault();
-      triggerSecurityOverlay('Clique direito bloqueado na área protegida.');
+      triggerSecurityOverlay();
     }
   });
 
   document.addEventListener('dragstart', (event) => {
-    if (event.target.closest('.protect-area') || event.target.closest('.lightbox')) {
+    if (isProtectedTarget(event.target)) {
       event.preventDefault();
-      triggerSecurityOverlay('Arrastar imagens foi bloqueado.');
+      triggerSecurityOverlay();
+    }
+  });
+
+  document.addEventListener('selectstart', (event) => {
+    if (isProtectedTarget(event.target)) {
+      event.preventDefault();
+      triggerSecurityOverlay();
+    }
+  });
+
+  document.addEventListener('copy', (event) => {
+    if (isProtectedTarget(event.target)) {
+      event.preventDefault();
+      triggerSecurityOverlay();
+    }
+  });
+
+  document.addEventListener('cut', (event) => {
+    if (isProtectedTarget(event.target)) {
+      event.preventDefault();
+      triggerSecurityOverlay();
     }
   });
 
   document.addEventListener('keydown', (event) => {
     const key = event.key.toLowerCase();
-    const isSave = (event.ctrlKey || event.metaKey) && key === 's';
-    const isPrint = (event.ctrlKey || event.metaKey) && key === 'p';
-    const isViewSource = (event.ctrlKey || event.metaKey) && key === 'u';
-    const isCopy = (event.ctrlKey || event.metaKey) && ['c', 'x'].includes(key);
-    const isDevTools = key === 'f12' || ((event.ctrlKey || event.metaKey) && event.shiftKey && ['i', 'j', 'c'].includes(key));
+    const ctrlOrMeta = event.ctrlKey || event.metaKey;
+    const isSave = ctrlOrMeta && key === 's';
+    const isPrint = ctrlOrMeta && key === 'p';
+    const isViewSource = ctrlOrMeta && key === 'u';
+    const isCopy = ctrlOrMeta && ['c', 'x', 'a'].includes(key);
+    const isDevTools = key === 'f12' || (ctrlOrMeta && event.shiftKey && ['i', 'j', 'c'].includes(key));
     const isPrintScreen = event.key === 'PrintScreen';
 
     if (isSave || isPrint || isViewSource || isDevTools || isPrintScreen || isCopy) {
       event.preventDefault();
-      triggerSecurityOverlay('Atalho bloqueado na área protegida.');
+      triggerSecurityOverlay();
+
+      if (isPrintScreen && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText('Conteúdo protegido. Captura não autorizada.').catch(() => {});
+      }
+    }
+  });
+
+  document.addEventListener('keyup', (event) => {
+    if (event.key === 'PrintScreen') {
+      triggerSecurityOverlay();
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText('Conteúdo protegido. Captura não autorizada.').catch(() => {});
+      }
     }
   });
 
   document.addEventListener('touchstart', (event) => {
-    if (!(event.target.closest('.protect-area') || event.target.closest('.lightbox'))) return;
-    if (event.touches.length >= 3) {
-      triggerSecurityOverlay('Gesto incomum detectado na área protegida.');
+    if (!isProtectedTarget(event.target)) return;
+
+    if (event.touches.length >= 2) {
+      triggerSecurityOverlay();
+      return;
     }
+
+    clearLongPressTimer();
+    longPressTimer = setTimeout(() => {
+      triggerSecurityOverlay();
+    }, 650);
   }, { passive: true });
+
+  ['touchend', 'touchcancel', 'touchmove', 'pointerup', 'pointercancel', 'mouseup'].forEach((eventName) => {
+    document.addEventListener(eventName, clearLongPressTimer, { passive: true });
+  });
+
+  window.addEventListener('beforeprint', () => triggerSecurityOverlay());
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') {
-      engageVisibilityShield('Visual ocultado ao trocar de app ou aba.');
+      engageVisibilityShield();
     } else {
       releaseVisibilityShield();
     }
   });
 
-  window.addEventListener('pagehide', () => engageVisibilityShield('Visual ocultado ao sair da página.'));
-  window.addEventListener('blur', () => engageVisibilityShield('Visual ocultado ao perder foco.'));
+  window.addEventListener('pagehide', () => engageVisibilityShield());
+  window.addEventListener('blur', () => engageVisibilityShield());
   window.addEventListener('focus', releaseVisibilityShield);
 }
 
-function engageVisibilityShield(customMessage) {
+function engageVisibilityShield() {
   document.body.classList.add('security-blur', 'visibility-guard');
-  triggerSecurityOverlay(customMessage || 'Proteção visual ativada ao perder foco.');
+  triggerSecurityOverlay({ keepVisible: true });
 }
 
 function releaseVisibilityShield() {
@@ -176,26 +239,22 @@ function releaseVisibilityShield() {
   triggerSecurityOverlay.timer = setTimeout(() => {
     document.body.classList.remove('security-blur');
     securityOverlay?.classList.add('hidden');
-  }, 400);
+    securityOverlay?.setAttribute('aria-hidden', 'true');
+  }, 900);
 }
 
-function triggerSecurityOverlay(customMessage) {
-  if (customMessage) {
-    const paragraph = securityOverlay?.querySelector('p');
-    if (paragraph) {
-      paragraph.textContent = `${customMessage} Isso não impede 100%, mas dificulta bastante.`;
-    }
-  }
-
+function triggerSecurityOverlay(options = {}) {
   document.body.classList.add('security-blur');
   securityOverlay?.classList.remove('hidden');
+  securityOverlay?.setAttribute('aria-hidden', 'false');
 
   clearTimeout(triggerSecurityOverlay.timer);
   triggerSecurityOverlay.timer = setTimeout(() => {
-    if (document.body.classList.contains('visibility-guard')) return;
+    if (options.keepVisible || document.body.classList.contains('visibility-guard')) return;
     document.body.classList.remove('security-blur');
     securityOverlay?.classList.add('hidden');
-  }, 1600);
+    securityOverlay?.setAttribute('aria-hidden', 'true');
+  }, 6000);
 }
 
 function escapeHtml(value) {

@@ -10,10 +10,12 @@
   <link rel="stylesheet" href="static/css/style.css" />
 </head>
 <body>
-  <div id="securityOverlay" class="security-overlay hidden" aria-hidden="true">
+  <div id="securityOverlay" class="security-overlay hidden" aria-hidden="true" role="alertdialog" aria-modal="true" aria-label="Conteúdo protegido">
     <div class="security-overlay-box glass">
-      <strong>Proteção visual ativada</strong>
-      <p>O site tentou bloquear uma ação de cópia ou captura. Isso não impede 100%, mas dificulta bastante.</p>
+      <strong>⚠️ Conteúdo protegido</strong>
+      <p>É proibida a captura, gravação, cópia, reprodução ou compartilhamento deste conteúdo sem autorização.</p>
+      <p>O uso indevido de imagens, vídeos ou informações deste site poderá gerar responsabilização civil e criminal, conforme a legislação aplicável.</p>
+      <p>Ao continuar navegando, você declara estar ciente dessas condições.</p>
     </div>
   </div>
 
@@ -119,14 +121,14 @@
         <div>
           <p class="eyebrow">Modelos</p>
           <h2>Galeria de modelos</h2>
-          <p class="muted section-note"><strong>Em construção.</strong> Esta área será publicada quando as modelos forem cadastradas.</p>
+          <p class="muted section-note">Clique em uma modelo para abrir a galeria individual protegida.</p>
 
         </div>
-        <span class="badge badge-soft">Em construção</span>
+        <span class="badge badge-soft">Galerias individuais</span>
       </div>
 
       <div id="modelsEmpty" class="empty-state glass hidden">
-Galeria de modelos em construção. Em breve esta área receberá os perfis individuais.
+Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/models-gallery-data.js</strong>.
       </div>
 
       <div id="modelsGrid" class="public-gallery-grid models-public-grid" aria-live="polite"></div>

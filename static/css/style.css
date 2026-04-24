@@ -53,9 +53,10 @@ body::after {
   z-index: -1;
 }
 
-body.security-blur .protect-area .gallery-image,
-body.security-blur .protect-area .gallery-image-wrap {
-  filter: blur(14px);
+body.security-blur .protect-area img,
+body.security-blur .lightbox img,
+body.security-blur .event-popup img {
+  filter: blur(18px);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -527,17 +528,28 @@ h2 {
 .security-overlay {
   position: fixed;
   inset: 0;
-  z-index: 80;
-  display: grid;
-  place-items: center;
-  background: rgba(0,0,0,0.25);
-  pointer-events: none;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  padding: 24px;
+  background: rgba(5, 5, 5, 0.97);
+  color: #ffffff;
+  text-align: center;
+  pointer-events: all;
 }
 
 .security-overlay-box {
-  width: min(100% - 24px, 520px);
-  padding: 24px;
-  text-align: center;
+  width: min(100% - 24px, 760px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 36px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.95);
+  box-shadow: 0 0 40px rgba(255, 0, 80, 0.35);
 }
 
 @media (max-width: 920px) {
@@ -629,14 +641,39 @@ body.gallery-locked .protect-area::before {
 }
 
 .protect-area,
-.protect-area * {
+.protect-area *,
+.lightbox,
+.lightbox *,
+.event-popup,
+.event-popup * {
   -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .security-overlay strong {
   display: block;
-  margin-bottom: 8px;
-  color: var(--champagne);
+  margin-bottom: 22px;
+  color: #ffcc00;
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.security-overlay p {
+  margin: 0 0 16px;
+  font-size: clamp(0.98rem, 2.8vw, 1.08rem);
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .security-overlay {
+    padding: 16px;
+  }
+
+  .security-overlay-box {
+    width: 100%;
+    padding: 28px 18px;
+  }
 }
 
 
