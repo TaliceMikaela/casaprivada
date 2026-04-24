@@ -130,76 +130,64 @@ function enableImageProtection() {
     longPressTimer = null;
   };
 
-  document.addEventListener('contextmenu', (event) => {
-    if (isProtectedTarget(event.target)) {
-      event.preventDefault();
-      triggerSecurityOverlay();
+  const showProtection = (event, options = {}) => {
+    if (event?.cancelable !== false) {
+      event?.preventDefault?.();
     }
-  });
 
-  document.addEventListener('dragstart', (event) => {
-    if (isProtectedTarget(event.target)) {
-      event.preventDefault();
-      triggerSecurityOverlay();
+    if (options.stop !== false) {
+      event?.stopPropagation?.();
     }
-  });
 
-  document.addEventListener('selectstart', (event) => {
-    if (isProtectedTarget(event.target)) {
-      event.preventDefault();
-      triggerSecurityOverlay();
-    }
-  });
+    triggerSecurityOverlay(options);
+  };
 
-  document.addEventListener('copy', (event) => {
-    if (isProtectedTarget(event.target)) {
-      event.preventDefault();
-      triggerSecurityOverlay();
-    }
-  });
+  const writeClipboardWarning = () => {
+    if (!navigator.clipboard?.writeText) return;
+    navigator.clipboard.writeText('Conteúdo protegido. Captura, cópia ou compartilhamento não autorizado.').catch(() => {});
+  };
 
-  document.addEventListener('cut', (event) => {
-    if (isProtectedTarget(event.target)) {
-      event.preventDefault();
-      triggerSecurityOverlay();
-    }
+  ['contextmenu', 'dragstart', 'selectstart', 'copy', 'cut'].forEach((eventName) => {
+    document.addEventListener(eventName, (event) => {
+      if (isProtectedTarget(event.target)) {
+        showProtection(event);
+      }
+    }, true);
   });
 
   document.addEventListener('keydown', (event) => {
-    const key = event.key.toLowerCase();
+    const key = String(event.key || '').toLowerCase();
+    const code = String(event.code || '').toLowerCase();
     const ctrlOrMeta = event.ctrlKey || event.metaKey;
-    const isSave = ctrlOrMeta && key === 's';
-    const isPrint = ctrlOrMeta && key === 'p';
-    const isViewSource = ctrlOrMeta && key === 'u';
-    const isCopy = ctrlOrMeta && ['c', 'x', 'a'].includes(key);
-    const isDevTools = key === 'f12' || (ctrlOrMeta && event.shiftKey && ['i', 'j', 'c'].includes(key));
-    const isPrintScreen = event.key === 'PrintScreen';
 
-    if (isSave || isPrint || isViewSource || isDevTools || isPrintScreen || isCopy) {
-      event.preventDefault();
-      triggerSecurityOverlay();
+    const shouldBlock = [
+      ctrlOrMeta && ['s', 'p', 'u', 'c', 'x', 'a'].includes(key),
+      ctrlOrMeta && event.shiftKey && ['i', 'j', 'c', 'k'].includes(key),
+      key === 'f12',
+      key === 'printscreen' || code === 'printscreen'
+    ].some(Boolean);
 
-      if (isPrintScreen && navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText('Conteúdo protegido. Captura não autorizada.').catch(() => {});
-      }
+    if (shouldBlock) {
+      showProtection(event);
+      writeClipboardWarning();
     }
-  });
+  }, true);
 
   document.addEventListener('keyup', (event) => {
-    if (event.key === 'PrintScreen') {
-      triggerSecurityOverlay();
+    const key = String(event.key || '').toLowerCase();
+    const code = String(event.code || '').toLowerCase();
 
-      if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText('Conteúdo protegido. Captura não autorizada.').catch(() => {});
-      }
+    if (key === 'printscreen' || code === 'printscreen') {
+      showProtection(event);
+      writeClipboardWarning();
     }
-  });
+  }, true);
 
   document.addEventListener('touchstart', (event) => {
     if (!isProtectedTarget(event.target)) return;
 
     if (event.touches.length >= 2) {
-      triggerSecurityOverlay();
+      showProtection(event, { stop: false });
       return;
     }
 
@@ -207,13 +195,22 @@ function enableImageProtection() {
     longPressTimer = setTimeout(() => {
       triggerSecurityOverlay();
     }, 650);
-  }, { passive: true });
+  }, { capture: true, passive: false });
 
-  ['touchend', 'touchcancel', 'touchmove', 'pointerup', 'pointercancel', 'mouseup'].forEach((eventName) => {
-    document.addEventListener(eventName, clearLongPressTimer, { passive: true });
+  document.addEventListener('touchmove', (event) => {
+    if (event.touches?.length >= 2 && isProtectedTarget(event.target)) {
+      showProtection(event, { stop: false });
+    }
+
+    clearLongPressTimer();
+  }, { capture: true, passive: false });
+
+  ['touchend', 'touchcancel', 'pointerup', 'pointercancel', 'mouseup', 'mouseleave'].forEach((eventName) => {
+    document.addEventListener(eventName, clearLongPressTimer, true);
   });
 
-  window.addEventListener('beforeprint', () => triggerSecurityOverlay());
+  window.addEventListener('beforeprint', () => triggerSecurityOverlay({ keepVisible: true }));
+  window.addEventListener('afterprint', releaseVisibilityShield);
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') {
