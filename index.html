@@ -162,7 +162,7 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
           <p class="muted">10/05 • Evento especial da casa</p>
           <p>Confira o banner do evento e faça sua confirmação antecipada pelo WhatsApp.</p>
           <div class="event-popup-actions">
-            <a class="btn btn-primary" href="https://wa.me/5545920016271" target="_blank" rel="noopener noreferrer">Confirmar presença</a>
+            <a class="btn btn-primary" href="https://wa.me/5545920016271?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer">Confirmar presença</a>
             <button id="dismissEventPopupBtn" class="btn btn-secondary" type="button">Fechar</button>
           </div>
         </div>
@@ -189,7 +189,7 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
 
   <a
     class="whatsapp-float"
-    href="https://wa.me/5545920016271"
+    href="https://wa.me/5545920016271?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es."
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Fale conosco pelo WhatsApp"
@@ -200,6 +200,31 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
     </svg>
     <span class="whatsapp-float-text">WhatsApp</span>
   </a>
+
+  <aside id="cookieConsentBanner" class="cookie-consent hidden" aria-hidden="true" aria-label="Política de cookies e cache">
+    <div class="cookie-consent-content">
+      <div class="cookie-consent-copy">
+        <strong>Política de cookies e cache</strong>
+        <p>
+          Usamos recursos necessários para lembrar sua confirmação de maioridade, melhorar a navegação e evitar que avisos apareçam repetidamente. Nenhum dado sensível é vendido ou compartilhado.
+        </p>
+        <details class="cookie-consent-details">
+          <summary>Ver detalhes</summary>
+          <div>
+            <p><strong>Cookies necessários:</strong> guardam sua confirmação de +18 e sua escolha sobre esta política.</p>
+            <p><strong>Cache do navegador:</strong> ajuda o site a carregar imagens, estilos e scripts mais rápido.</p>
+            <p><strong>Armazenamento local:</strong> pode registrar preferências simples, como popup já exibido na sessão.</p>
+            <p>Você pode limpar esses dados pelo navegador ou pelo botão abaixo. Ao limpar, o site poderá pedir nova confirmação de maioridade.</p>
+          </div>
+        </details>
+      </div>
+      <div class="cookie-consent-actions">
+        <button id="acceptCookiesBtn" class="btn btn-primary btn-small" type="button">Aceitar e continuar</button>
+        <button id="necessaryCookiesBtn" class="btn btn-secondary btn-small" type="button">Somente necessários</button>
+        <button id="clearSiteDataBtn" class="btn btn-outline btn-small" type="button">Limpar dados deste site</button>
+      </div>
+    </div>
+  </aside>
 
   <script src="static/js/auth.js"></script>
   <script src="static/js/house-gallery-data.js"></script>

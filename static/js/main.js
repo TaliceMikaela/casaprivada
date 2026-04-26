@@ -20,12 +20,18 @@ const dismissEventPopupBtn = document.getElementById('dismissEventPopupBtn');
 const openEventBannerBtn = document.getElementById('openEventBannerBtn');
 const ageGate = document.getElementById('ageGate');
 const ageConfirmBtn = document.getElementById('ageConfirmBtn');
+const cookieConsentBanner = document.getElementById('cookieConsentBanner');
+const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
+const necessaryCookiesBtn = document.getElementById('necessaryCookiesBtn');
+const clearSiteDataBtn = document.getElementById('clearSiteDataBtn');
 
 
 const EVENT_POPUP_END_AT = '2026-05-11T00:00:00-03:00';
 const AGE_GATE_STORAGE_KEY = 'cdp_age_gate_18_verified';
 const AGE_GATE_COOKIE_NAME = 'cdp_age_gate_18_verified';
 const EVENT_POPUP_SESSION_KEY = 'cdp_event_popup_shown';
+const COOKIE_CONSENT_STORAGE_KEY = 'cdp_cookie_cache_consent';
+const COOKIE_CONSENT_COOKIE_NAME = 'cdp_cookie_cache_consent';
 const EVENT_BANNER = {
   src: 'static/img/eventos/evento-noite-das-coelhinhas-2026-05-10-casa-dos-prazeres-prive-lounge.png',
   alt: 'Banner do evento Noite das Coelhinhas da Casa dos Prazeres Privé Lounge',
@@ -44,6 +50,7 @@ function init() {
   bindLightboxEvents();
   bindModelsEvents();
   bindEventPopup();
+  bindCookieConsent();
   bindAgeGate();
   enableImageProtection();
 }
@@ -365,11 +372,84 @@ function buildModelMetaText(model) {
 }
 
 
+
+function bindCookieConsent() {
+  acceptCookiesBtn?.addEventListener('click', () => saveCookieConsent('accepted'));
+  necessaryCookiesBtn?.addEventListener('click', () => saveCookieConsent('necessary'));
+  clearSiteDataBtn?.addEventListener('click', clearSitePreferenceData);
+
+  showCookieConsentWhenAllowed();
+}
+
+function showCookieConsentWhenAllowed() {
+  if (!cookieConsentBanner || hasCookieConsent()) return;
+
+  if (isAgeGateVisible()) {
+    cookieConsentBanner.classList.add('hidden');
+    cookieConsentBanner.setAttribute('aria-hidden', 'true');
+    return;
+  }
+
+  cookieConsentBanner.classList.remove('hidden');
+  cookieConsentBanner.setAttribute('aria-hidden', 'false');
+}
+
+function hasCookieConsent() {
+  return (
+    safeStorageGet('localStorage', COOKIE_CONSENT_STORAGE_KEY) === 'accepted' ||
+    safeStorageGet('localStorage', COOKIE_CONSENT_STORAGE_KEY) === 'necessary' ||
+    getCookie(COOKIE_CONSENT_COOKIE_NAME) === 'accepted' ||
+    getCookie(COOKIE_CONSENT_COOKIE_NAME) === 'necessary'
+  );
+}
+
+function saveCookieConsent(consentType) {
+  const value = consentType === 'accepted' ? 'accepted' : 'necessary';
+  safeStorageSet('localStorage', COOKIE_CONSENT_STORAGE_KEY, value);
+  setCookie(COOKIE_CONSENT_COOKIE_NAME, value, 180);
+  cookieConsentBanner?.classList.add('hidden');
+  cookieConsentBanner?.setAttribute('aria-hidden', 'true');
+}
+
+function clearSitePreferenceData() {
+  [
+    AGE_GATE_STORAGE_KEY,
+    EVENT_POPUP_SESSION_KEY,
+    COOKIE_CONSENT_STORAGE_KEY
+  ].forEach((key) => {
+    try { localStorage.removeItem(key); } catch (error) {}
+    try { sessionStorage.removeItem(key); } catch (error) {}
+  });
+
+  [
+    AGE_GATE_COOKIE_NAME,
+    COOKIE_CONSENT_COOKIE_NAME
+  ].forEach(expireCookie);
+
+  if (window.caches?.keys) {
+    window.caches.keys()
+      .then((cacheNames) => Promise.all(cacheNames.map((cacheName) => window.caches.delete(cacheName))))
+      .finally(() => window.location.reload());
+    return;
+  }
+
+  window.location.reload();
+}
+
+function expireCookie(name) {
+  try {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+  } catch (error) {
+    // segue sem cookie
+  }
+}
+
 function bindAgeGate() {
   if (!ageGate || !ageConfirmBtn) return;
 
   if (isAgeVerified()) {
     unlockAgeGate();
+    showCookieConsentWhenAllowed();
     showEventPopupAfterAgeConfirmation();
     return;
   }
@@ -379,6 +459,7 @@ function bindAgeGate() {
   ageConfirmBtn.addEventListener('click', () => {
     persistAgeVerification();
     unlockAgeGate();
+    showCookieConsentWhenAllowed();
     showEventPopupAfterAgeConfirmation(true);
   }, { once: true });
 }
