@@ -58,5 +58,11 @@ window.HOUSE_GALLERY_ITEMS = [
     title: 'Área da piscina',
     description: 'Espaço externo com piscina, deck e área gourmet integrada.',
     alt: 'Área da piscina da casa'
+  },
+  {
+    src: 'static/img/casa/ambiente11.jpg',
+    title: 'Sala de jogos',
+    description: 'Ambiente interno com mesa de sinuca, iluminação elegante e espaço de convivência.',
+    alt: 'Sala de jogos com mesa de sinuca da casa'
   }
 ];
