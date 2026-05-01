@@ -45,6 +45,20 @@ window.MODELS_GALLERY_DATA = [
     ]
   },
   {
+    name: 'Maya',
+    age: '18 anos',
+    city: 'Casa dos Prazeres',
+    tagline: 'Galeria individual',
+    description: 'Perfil com fotos selecionadas para divulgação no site.',
+    cover: 'static/img/modelos/Maya18anos/foto1.jpg',
+    gallery: [
+      { src: 'static/img/modelos/Maya18anos/foto1.jpg', title: 'Maya • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Maya18anos/foto2.jpg', title: 'Maya • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Maya18anos/foto3.jpg', title: 'Maya • Foto 3', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Maya18anos/foto4.jpg', title: 'Maya • Foto 4', description: 'Foto da galeria individual.' }
+    ]
+  },
+  {
     name: 'Natália',
     age: '18 anos',
     city: 'Casa dos Prazeres',

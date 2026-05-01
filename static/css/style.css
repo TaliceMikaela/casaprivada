@@ -1313,3 +1313,55 @@ body.age-gate-active {
     overflow-y: auto;
   }
 }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(241, 201, 121, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  transform: translateY(-50%);
+  color: var(--champagne);
+  background: rgba(0, 0, 0, 0.58);
+  font-size: 2.4rem;
+  line-height: 0.8;
+  display: grid;
+  place-items: center;
+}
+
+.lightbox-nav:hover,
+.lightbox-nav:focus-visible {
+  background: rgba(241, 201, 121, 0.18);
+  outline: none;
+}
+
+.lightbox-nav-prev {
+  left: 0.85rem;
+}
+
+.lightbox-nav-next {
+  right: 0.85rem;
+}
+
+.lightbox-nav.hidden {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
+  }
+
+  .lightbox-nav-prev {
+    left: 0.45rem;
+  }
+
+  .lightbox-nav-next {
+    right: 0.45rem;
+  }
+}

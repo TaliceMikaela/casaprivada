@@ -6,6 +6,8 @@ const lightboxImage = document.getElementById('lightboxImage');
 const lightboxTitle = document.getElementById('lightboxTitle');
 const lightboxDescription = document.getElementById('lightboxDescription');
 const closeLightboxBtn = document.getElementById('closeLightboxBtn');
+const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
+const lightboxNextBtn = document.getElementById('lightboxNextBtn');
 const modelsGrid = document.getElementById('modelsGrid');
 const modelsEmpty = document.getElementById('modelsEmpty');
 const modelGalleryPanel = document.getElementById('modelGalleryPanel');
@@ -32,12 +34,16 @@ const AGE_GATE_COOKIE_NAME = 'cdp_age_gate_18_verified';
 const EVENT_POPUP_SESSION_KEY = 'cdp_event_popup_shown';
 const COOKIE_CONSENT_STORAGE_KEY = 'cdp_cookie_cache_consent';
 const COOKIE_CONSENT_COOKIE_NAME = 'cdp_cookie_cache_consent';
+
 const EVENT_BANNER = {
   src: 'static/img/eventos/evento-noite-das-coelhinhas-2026-05-10-casa-dos-prazeres-prive-lounge.png',
   alt: 'Banner do evento Noite das Coelhinhas da Casa dos Prazeres Privé Lounge',
   title: 'Noite das Coelhinhas',
   description: 'Evento especial da casa em 10/05. Confirmação antecipada pelo WhatsApp.'
 };
+
+let lightboxItems = [];
+let lightboxCurrentIndex = -1;
 
 const PUBLIC_GALLERY_ITEMS = Array.isArray(window.HOUSE_GALLERY_ITEMS) ? window.HOUSE_GALLERY_ITEMS : [];
 const MODELS_GALLERY_DATA = Array.isArray(window.MODELS_GALLERY_DATA) ? window.MODELS_GALLERY_DATA : [];
@@ -89,6 +95,14 @@ function renderPublicGallery(items) {
 
 function bindLightboxEvents() {
   closeLightboxBtn?.addEventListener('click', closeLightbox);
+  lightboxPrevBtn?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showLightboxPhoto(-1);
+  });
+  lightboxNextBtn?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showLightboxPhoto(1);
+  });
 
   lightboxModal?.addEventListener('click', (event) => {
     if (event.target.dataset.closeLightbox === 'true') {
@@ -97,21 +111,55 @@ function bindLightboxEvents() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !lightboxModal?.classList.contains('hidden')) {
+    if (lightboxModal?.classList.contains('hidden')) return;
+
+    if (event.key === 'Escape') {
       closeLightbox();
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      showLightboxPhoto(-1);
+      return;
+    }
+
+    if (event.key === 'ArrowRight') {
+      showLightboxPhoto(1);
     }
   });
 }
 
-function openLightbox(item) {
+function openLightbox(item, items = null, startIndex = 0) {
   if (!lightboxModal || !lightboxImage || !lightboxTitle || !lightboxDescription) return;
+
+  lightboxItems = Array.isArray(items) && items.length ? items : [item];
+  lightboxCurrentIndex = Math.max(0, Math.min(startIndex, lightboxItems.length - 1));
+  updateLightboxContent(lightboxItems[lightboxCurrentIndex] || item);
+  updateLightboxNav();
+
+  lightboxModal.classList.remove('hidden');
+  lightboxModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateLightboxContent(item) {
+  if (!item || !lightboxImage || !lightboxTitle || !lightboxDescription) return;
   lightboxImage.src = item.src;
   lightboxImage.alt = item.alt || item.title || 'Foto ampliada do ambiente';
   lightboxTitle.textContent = item.title || 'Ambiente da casa';
   lightboxDescription.textContent = item.description || 'Visualização ampliada';
-  lightboxModal.classList.remove('hidden');
-  lightboxModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+}
+
+function showLightboxPhoto(direction) {
+  if (!lightboxItems.length || lightboxItems.length < 2) return;
+  lightboxCurrentIndex = (lightboxCurrentIndex + direction + lightboxItems.length) % lightboxItems.length;
+  updateLightboxContent(lightboxItems[lightboxCurrentIndex]);
+}
+
+function updateLightboxNav() {
+  const hasNavigation = lightboxItems.length > 1;
+  lightboxPrevBtn?.classList.toggle('hidden', !hasNavigation);
+  lightboxNextBtn?.classList.toggle('hidden', !hasNavigation);
 }
 
 function closeLightbox() {
@@ -119,9 +167,11 @@ function closeLightbox() {
   lightboxModal.classList.add('hidden');
   lightboxModal.setAttribute('aria-hidden', 'true');
   lightboxImage.src = '';
+  lightboxItems = [];
+  lightboxCurrentIndex = -1;
+  updateLightboxNav();
   document.body.style.overflow = '';
 }
-
 function enableImageProtection() {
   let longPressTimer = null;
 
@@ -339,12 +389,19 @@ function openModelGallery(index) {
       </div>
     `;
 
+    const modelLightboxItems = photos.map((photoItem, indexItem) => ({
+      src: photoItem.src,
+      alt: photoItem.alt || photoItem.title || model.name || 'Foto da modelo',
+      title: photoItem.title || `${model.name || 'Modelo'} • Foto ${indexItem + 1}`,
+      description: photoItem.description || model.description || 'Visualização ampliada'
+    }));
+
     button.addEventListener('click', () => openLightbox({
       src: photo.src,
       alt: photo.alt || photo.title || model.name || 'Foto da modelo',
       title: photo.title || `${model.name || 'Modelo'} • Foto ${photoIndex + 1}`,
       description: photo.description || model.description || 'Visualização ampliada'
-    }));
+    }, modelLightboxItems, photoIndex));
 
     modelGalleryGrid.appendChild(button);
   });
