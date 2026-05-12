@@ -88,7 +88,17 @@ function renderPublicGallery(items) {
       </div>
     `;
 
-    button.addEventListener('click', () => openLightbox(item));
+    button.addEventListener('click', () => openLightbox({
+      src: item.src,
+      alt: item.alt || item.title || 'Foto do ambiente da casa',
+      title: item.title || 'Ambiente da casa',
+      description: item.description || 'Visualização ampliada'
+    }, items.map((galleryItem) => ({
+      src: galleryItem.src,
+      alt: galleryItem.alt || galleryItem.title || 'Foto do ambiente da casa',
+      title: galleryItem.title || 'Ambiente da casa',
+      description: galleryItem.description || 'Visualização ampliada'
+    })), index));
     publicGalleryGrid.appendChild(button);
   });
 }

@@ -15,33 +15,58 @@ window.MODELS_GALLERY_DATA = [
     ]
   },
   {
-    name: 'Fernanda Massagista',
-    age: '35 anos',
+    name: 'Brenda',
+    age: '27 anos',
     city: 'Casa dos Prazeres',
     tagline: 'Galeria individual',
     description: 'Perfil com fotos selecionadas para divulgação no site.',
-    cover: 'static/img/modelos/FernandaMassagista35anos/foto1.jpg',
+    cover: 'static/img/modelos/Brenda27anos/foto1.jpg',
     gallery: [
-      { src: 'static/img/modelos/FernandaMassagista35anos/foto1.jpg', title: 'Fernanda Massagista • Foto 1', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/FernandaMassagista35anos/foto2.jpg', title: 'Fernanda Massagista • Foto 2', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/FernandaMassagista35anos/foto3.jpg', title: 'Fernanda Massagista • Foto 3', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/FernandaMassagista35anos/foto4.jpg', title: 'Fernanda Massagista • Foto 4', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/FernandaMassagista35anos/foto5.jpg', title: 'Fernanda Massagista • Foto 5', description: 'Foto da galeria individual.' }
+      { src: 'static/img/modelos/Brenda27anos/foto1.jpg', title: 'Brenda • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Brenda27anos/foto2.jpg', title: 'Brenda • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Brenda27anos/foto3.jpg', title: 'Brenda • Foto 3', description: 'Foto da galeria individual.' }
     ]
   },
   {
-    name: 'Giovana',
-    age: '25 anos',
+    name: 'Amanda',
+    age: '26 anos',
     city: 'Casa dos Prazeres',
     tagline: 'Galeria individual',
     description: 'Perfil com fotos selecionadas para divulgação no site.',
-    cover: 'static/img/modelos/Giovana25anos/foto1.jpg',
+    cover: 'static/img/modelos/Amanda26anos/foto1.jpg',
     gallery: [
-      { src: 'static/img/modelos/Giovana25anos/foto1.jpg', title: 'Giovana • Foto 1', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Giovana25anos/foto2.jpg', title: 'Giovana • Foto 2', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Giovana25anos/foto3.jpg', title: 'Giovana • Foto 3', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Giovana25anos/foto4.jpg', title: 'Giovana • Foto 4', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Giovana25anos/foto5.jpg', title: 'Giovana • Foto 5', description: 'Foto da galeria individual.' }
+      { src: 'static/img/modelos/Amanda26anos/foto1.jpg', title: 'Amanda • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Amanda26anos/foto2.jpg', title: 'Amanda • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Amanda26anos/foto3.jpg', title: 'Amanda • Foto 3', description: 'Foto da galeria individual.' }
+    ]
+  },
+  {
+    name: 'Natasha',
+    age: '26 anos',
+    city: 'Casa dos Prazeres',
+    tagline: 'Galeria individual',
+    description: 'Perfil com fotos selecionadas para divulgação no site.',
+    cover: 'static/img/modelos/Natasha26anos/foto1.jpg',
+    gallery: [
+      { src: 'static/img/modelos/Natasha26anos/foto1.jpg', title: 'Natasha • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Natasha26anos/foto2.jpg', title: 'Natasha • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Natasha26anos/foto3.jpg', title: 'Natasha • Foto 3', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Natasha26anos/foto4.jpg', title: 'Natasha • Foto 4', description: 'Foto da galeria individual.' }
+    ]
+  },
+  {
+    name: 'Nina',
+    age: '19 anos',
+    city: 'Casa dos Prazeres',
+    tagline: 'Galeria individual',
+    description: 'Perfil com fotos selecionadas para divulgação no site.',
+    cover: 'static/img/modelos/Nina19anos/foto1.jpg',
+    gallery: [
+      { src: 'static/img/modelos/Nina19anos/foto1.jpg', title: 'Nina • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Nina19anos/foto2.jpg', title: 'Nina • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Nina19anos/foto3.jpg', title: 'Nina • Foto 3', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Nina19anos/foto4.jpg', title: 'Nina • Foto 4', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Nina19anos/foto5.jpg', title: 'Nina • Foto 5', description: 'Foto da galeria individual.' }
     ]
   },
   {
