@@ -70,6 +70,20 @@ window.MODELS_GALLERY_DATA = [
     ]
   },
   {
+    name: 'Larissa',
+    age: '25 anos',
+    city: 'Casa dos Prazeres',
+    tagline: 'Galeria individual',
+    description: 'Perfil com fotos selecionadas para divulgação no site.',
+    cover: 'static/img/modelos/Larissa25anos/foto1.jpg',
+    gallery: [
+      { src: 'static/img/modelos/Larissa25anos/foto1.jpg', title: 'Larissa • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Larissa25anos/foto2.jpg', title: 'Larissa • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Larissa25anos/foto3.jpg', title: 'Larissa • Foto 3', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Larissa25anos/foto4.jpg', title: 'Larissa • Foto 4', description: 'Foto da galeria individual.' }
+    ]
+  },
+  {
     name: 'Natália',
     age: '18 anos',
     city: 'Casa dos Prazeres',
