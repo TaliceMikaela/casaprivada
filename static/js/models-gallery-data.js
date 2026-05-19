@@ -15,16 +15,18 @@ window.MODELS_GALLERY_DATA = [
     ]
   },
   {
-    name: 'Brenda',
-    age: '27 anos',
+    name: 'Beatriz',
+    age: '19 anos',
     city: 'Casa dos Prazeres',
     tagline: 'Galeria individual',
     description: 'Perfil com fotos selecionadas para divulgação no site.',
-    cover: 'static/img/modelos/Brenda27anos/foto1.jpg',
+    cover: 'static/img/modelos/Beatriz19anos/foto1.jpg',
     gallery: [
-      { src: 'static/img/modelos/Brenda27anos/foto1.jpg', title: 'Brenda • Foto 1', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Brenda27anos/foto2.jpg', title: 'Brenda • Foto 2', description: 'Foto da galeria individual.' },
-      { src: 'static/img/modelos/Brenda27anos/foto3.jpg', title: 'Brenda • Foto 3', description: 'Foto da galeria individual.' }
+      { src: 'static/img/modelos/Beatriz19anos/foto1.jpg', title: 'Beatriz • Foto 1', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Beatriz19anos/foto2.jpg', title: 'Beatriz • Foto 2', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Beatriz19anos/foto3.jpg', title: 'Beatriz • Foto 3', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Beatriz19anos/foto4.jpg', title: 'Beatriz • Foto 4', description: 'Foto da galeria individual.' },
+      { src: 'static/img/modelos/Beatriz19anos/foto5.jpg', title: 'Beatriz • Foto 5', description: 'Foto da galeria individual.' }
     ]
   },
   {
