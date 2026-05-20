@@ -134,4 +134,49 @@
         "description": "Foto da galeria individual."
       }
     ]
-  }];
+  },
+  {
+    "name": "Giovana25anos",
+    "age": "19 anos",
+    "city": "Casa dos Prazeres",
+    "tagline": "Galeria individual",
+    "description": "Perfil com fotos selecionadas para divulgação no site.",
+    "cover": "img/modelos/Giovana25anos/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/Beatriz19anos/foto1.jpg",
+        "title": "Beatriz • Foto 1",
+        "description": "Foto da galeria individual."
+      },
+      {
+        "src": "static/img/modelos/Beatriz19anos/foto2.jpg",
+        "title": "Beatriz • Foto 2",
+        "description": "Foto da galeria individual."
+      },
+      {
+        "src": "static/img/modelos/Beatriz19anos/foto3.jpg",
+        "title": "Beatriz • Foto 3",
+        "description": "Foto da galeria individual."
+      },
+      {
+        "src": "static/img/modelos/Beatriz19anos/foto4.jpg",
+        "title": "Beatriz • Foto 4",
+        "description": "Foto da galeria individual."
+      },
+      {
+        "src": "static/img/modelos/Beatriz19anos/foto5.jpg",
+        "title": "Beatriz • Foto 5",
+        "description": "Foto da galeria individual."
+      }
+    ],
+    "id": "giovana25anos",
+    "nome": "Giovana25anos",
+    "fotos": [
+      "img/modelos/Giovana25anos/foto1.jpg",
+      "img/modelos/Giovana25anos/foto2.jpg",
+      "img/modelos/Giovana25anos/foto3.jpg",
+      "img/modelos/Giovana25anos/foto4.jpg",
+      "img/modelos/Giovana25anos/foto5.jpg"
+    ]
+  }
+];
