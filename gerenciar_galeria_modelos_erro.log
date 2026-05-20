@@ -1,0 +1,26 @@
+
+================================================================================
+2026-05-20 18:25:03
+Traceback (most recent call last):
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 296, in refresh
+    _, _, _, self.models = load_models()
+                           ~~~~~~~~~~~^^
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 171, in load_models
+    start, end, array_text = find_models_array(text)
+                             ~~~~~~~~~~~~~~~~~^^^^^^
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 163, in find_models_array
+    raise RuntimeError("Não encontrei um array de modelos contendo caminhos 'img/modelos' no arquivo JS.")
+RuntimeError: Não encontrei um array de modelos contendo caminhos 'img/modelos' no arquivo JS.
+
+================================================================================
+2026-05-20 18:25:05
+Traceback (most recent call last):
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 296, in refresh
+    _, _, _, self.models = load_models()
+                           ~~~~~~~~~~~^^
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 171, in load_models
+    start, end, array_text = find_models_array(text)
+                             ~~~~~~~~~~~~~~~~~^^^^^^
+  File "f:\REPOSITORIOS\MIKAELA_CDP\Casaprivada\casaprivada\gerenciar_galeria_modelos_obsoletas_v2.py", line 163, in find_models_array
+    raise RuntimeError("Não encontrei um array de modelos contendo caminhos 'img/modelos' no arquivo JS.")
+RuntimeError: Não encontrei um array de modelos contendo caminhos 'img/modelos' no arquivo JS.

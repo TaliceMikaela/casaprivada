@@ -331,6 +331,47 @@ function escapeHtml(value) {
 }
 
 
+
+function normalizeModelPhotos(model) {
+  const rawPhotos = Array.isArray(model.gallery)
+    ? model.gallery
+    : Array.isArray(model.fotos)
+      ? model.fotos
+      : Array.isArray(model.photos)
+        ? model.photos
+        : Array.isArray(model.images)
+          ? model.images
+          : [];
+
+  return rawPhotos
+    .map((photo, index) => {
+      if (typeof photo === 'string') {
+        return {
+          src: photo,
+          alt: `${model.name || model.nome || 'Modelo'} • Foto ${index + 1}`,
+          title: `${model.name || model.nome || 'Modelo'} • Foto ${index + 1}`,
+          description: 'Clique para ampliar'
+        };
+      }
+
+      if (photo && typeof photo === 'object' && photo.src) {
+        return photo;
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+}
+
+function getModelDisplayName(model) {
+  return model.name || model.nome || model.title || model.titulo || 'Modelo';
+}
+
+function getModelCover(model) {
+  const photos = normalizeModelPhotos(model);
+  return model.cover || model.capa || model.image || model.imagem || photos[0]?.src || '';
+}
+
 function renderModelsGallery(models) {
   if (!modelsGrid || !modelsEmpty) return;
   modelsGrid.innerHTML = '';
@@ -347,18 +388,16 @@ function renderModelsGallery(models) {
     button.type = 'button';
     button.className = 'public-gallery-card model-gallery-card';
     button.dataset.modelIndex = String(index);
-    button.setAttribute('aria-label', `Abrir galeria de ${model.name || 'modelo'}`);
+    button.setAttribute('aria-label', `Abrir galeria de ${getModelDisplayName(model)}`);
 
     const metaText = buildModelMetaText(model);
-    const subtitle = [metaText, model.tagline || 'Clique para ver a galeria individual.']
-      .filter(Boolean)
-      .join(' • ');
+    const subtitle = metaText || model.tagline || 'Clique para ver a galeria individual.';
 
     button.innerHTML = `
       <div class="public-gallery-media gallery-watermark">
-        <img class="public-gallery-image" src="${escapeHtml(model.cover || '')}" alt="${escapeHtml(model.name || 'Modelo')}" loading="lazy" draggable="false" />
-        <div class="public-gallery-overlay">
-          <h3>${escapeHtml(model.name || 'Modelo')}</h3>
+        <img class="public-gallery-image" src="${escapeHtml(getModelCover(model))}" alt="${escapeHtml(getModelDisplayName(model))}" loading="lazy" draggable="false" />
+        <div class="public-gallery-overlay model-card-center-overlay">
+          <h3>${escapeHtml(getModelDisplayName(model))}</h3>
           <p>${escapeHtml(subtitle)}</p>
         </div>
       </div>
@@ -377,12 +416,12 @@ function openModelGallery(index) {
   const model = MODELS_GALLERY_DATA[index];
   if (!model || !modelGalleryPanel || !modelGalleryGrid || !modelGalleryTitle || !modelGalleryMeta || !modelGalleryDescription) return;
 
-  modelGalleryTitle.textContent = model.name || 'Modelo';
+  modelGalleryTitle.textContent = getModelDisplayName(model);
   modelGalleryMeta.innerHTML = buildModelMeta(model);
   modelGalleryDescription.textContent = model.description || 'Galeria individual da modelo.';
   modelGalleryGrid.innerHTML = '';
 
-  const photos = Array.isArray(model.gallery) ? model.gallery : [];
+  const photos = normalizeModelPhotos(model);
 
   photos.forEach((photo, photoIndex) => {
     const button = document.createElement('button');
@@ -391,9 +430,9 @@ function openModelGallery(index) {
     button.dataset.photoIndex = String(photoIndex);
     button.innerHTML = `
       <div class="public-gallery-media gallery-watermark">
-        <img class="public-gallery-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || photo.title || model.name || 'Foto da modelo')}" loading="lazy" draggable="false" />
+        <img class="public-gallery-image" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || photo.title || getModelDisplayName(model) || 'Foto da modelo')}" loading="lazy" draggable="false" />
         <div class="public-gallery-overlay">
-          <h3>${escapeHtml(photo.title || `${model.name || 'Modelo'} • Foto ${photoIndex + 1}`)}</h3>
+          <h3>${escapeHtml(photo.title || `${getModelDisplayName(model)} • Foto ${photoIndex + 1}`)}</h3>
           <p>${escapeHtml(photo.description || 'Clique para ampliar')}</p>
         </div>
       </div>
@@ -401,15 +440,15 @@ function openModelGallery(index) {
 
     const modelLightboxItems = photos.map((photoItem, indexItem) => ({
       src: photoItem.src,
-      alt: photoItem.alt || photoItem.title || model.name || 'Foto da modelo',
-      title: photoItem.title || `${model.name || 'Modelo'} • Foto ${indexItem + 1}`,
+      alt: photoItem.alt || photoItem.title || getModelDisplayName(model) || 'Foto da modelo',
+      title: photoItem.title || `${getModelDisplayName(model)} • Foto ${indexItem + 1}`,
       description: photoItem.description || model.description || 'Visualização ampliada'
     }));
 
     button.addEventListener('click', () => openLightbox({
       src: photo.src,
-      alt: photo.alt || photo.title || model.name || 'Foto da modelo',
-      title: photo.title || `${model.name || 'Modelo'} • Foto ${photoIndex + 1}`,
+      alt: photo.alt || photo.title || getModelDisplayName(model) || 'Foto da modelo',
+      title: photo.title || `${getModelDisplayName(model)} • Foto ${photoIndex + 1}`,
       description: photo.description || model.description || 'Visualização ampliada'
     }, modelLightboxItems, photoIndex));
 
