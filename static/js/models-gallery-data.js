@@ -72,44 +72,6 @@
     ]
   },
   {
-    "id": "nina19anos",
-    "name": "Nina",
-    "age": "19 anos",
-    "sign": "",
-    "city": "",
-    "tagline": "Clique para ver a galeria individual.",
-    "description": "Galeria individual de Nina.",
-    "folder": "static/img/modelos/Nina19anos_20260520_183929",
-    "cover": "static/img/modelos/Nina19anos_20260520_183929/foto1.jpg",
-    "gallery": [
-      {
-        "src": "static/img/modelos/Nina19anos_20260520_183929/foto1.jpg",
-        "title": "Nina • Foto 1",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Nina19anos_20260520_183929/foto2.jpg",
-        "title": "Nina • Foto 2",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Nina19anos_20260520_183929/foto3.jpg",
-        "title": "Nina • Foto 3",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Nina19anos_20260520_183929/foto4.jpg",
-        "title": "Nina • Foto 4",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Nina19anos_20260520_183929/foto5.jpg",
-        "title": "Nina • Foto 5",
-        "description": "Clique para ampliar"
-      }
-    ]
-  },
-  {
     "id": "natalia18anos",
     "name": "Natalia",
     "age": "18 anos",
@@ -181,6 +143,49 @@
       {
         "src": "static/img/modelos/Giovana25anos_20260520_184055/foto5.jpg",
         "title": "Giovana • Foto 5",
+        "description": "Clique para ampliar"
+      }
+    ]
+  },
+  {
+    "id": "nina19anos-20260521-073140",
+    "name": "Nina",
+    "age": "19 anos",
+    "sign": "",
+    "city": "",
+    "tagline": "Clique para ver a galeria individual.",
+    "description": "Galeria individual de Nina.",
+    "folder": "static/img/modelos/Nina19anos_20260521_073140",
+    "cover": "static/img/modelos/Nina19anos_20260521_073140/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/Nina19anos_20260521_073140/foto1.jpg",
+        "alt": "Nina • Foto 1",
+        "title": "Nina • Foto 1",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Nina19anos_20260521_073140/foto2.jpg",
+        "alt": "Nina • Foto 2",
+        "title": "Nina • Foto 2",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Nina19anos_20260521_073140/foto3.jpg",
+        "alt": "Nina • Foto 3",
+        "title": "Nina • Foto 3",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Nina19anos_20260521_073140/foto4.jpg",
+        "alt": "Nina • Foto 4",
+        "title": "Nina • Foto 4",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Nina19anos_20260521_073140/foto5.jpg",
+        "alt": "Nina • Foto 5",
+        "title": "Nina • Foto 5",
         "description": "Clique para ampliar"
       }
     ]
