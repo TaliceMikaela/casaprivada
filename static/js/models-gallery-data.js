@@ -189,5 +189,48 @@
         "description": "Clique para ampliar"
       }
     ]
+  },
+  {
+    "id": "alice19anos-20260523-172918",
+    "name": "Alice",
+    "age": "19 anos",
+    "sign": "",
+    "city": "",
+    "tagline": "Clique para ver a galeria individual.",
+    "description": "Galeria individual de Alice.",
+    "folder": "static/img/modelos/Alice19anos_20260523_172918",
+    "cover": "static/img/modelos/Alice19anos_20260523_172918/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/Alice19anos_20260523_172918/foto1.jpg",
+        "alt": "Alice • Foto 1",
+        "title": "Alice • Foto 1",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Alice19anos_20260523_172918/foto2.jpg",
+        "alt": "Alice • Foto 2",
+        "title": "Alice • Foto 2",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Alice19anos_20260523_172918/foto3.jpg",
+        "alt": "Alice • Foto 3",
+        "title": "Alice • Foto 3",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Alice19anos_20260523_172918/foto4.jpg",
+        "alt": "Alice • Foto 4",
+        "title": "Alice • Foto 4",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Alice19anos_20260523_172918/foto5.jpg",
+        "alt": "Alice • Foto 5",
+        "title": "Alice • Foto 5",
+        "description": "Clique para ampliar"
+      }
+    ]
   }
 ];
