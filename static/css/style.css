@@ -1412,3 +1412,18 @@ body.age-gate-active {
 .model-gallery-card:focus-visible .model-card-center-overlay {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.25) 38%, rgba(0, 0, 0, 0.78));
 }
+
+
+/* Ajuste específico para nome longo da Ashley Cubana na grade */
+.model-card-center-overlay h3.model-name-compact {
+  font-size: clamp(1.05rem, 1.85vw, 1.65rem);
+  line-height: 1.08;
+  max-width: 92%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .model-card-center-overlay h3.model-name-compact {
+    font-size: clamp(1.2rem, 7vw, 1.75rem);
+  }
+}

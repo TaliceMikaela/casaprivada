@@ -392,12 +392,15 @@ function renderModelsGallery(models) {
 
     const metaText = buildModelMetaText(model);
     const subtitle = metaText || model.tagline || 'Clique para ver a galeria individual.';
+    const modelName = getModelDisplayName(model);
+    const isAshleyCubana = String(model.id || '').toLowerCase().startsWith('ashleycubana');
+    const modelNameClass = isAshleyCubana ? ' class="model-name-compact"' : '';
 
     button.innerHTML = `
       <div class="public-gallery-media gallery-watermark">
-        <img class="public-gallery-image" src="${escapeHtml(getModelCover(model))}" alt="${escapeHtml(getModelDisplayName(model))}" loading="lazy" draggable="false" />
+        <img class="public-gallery-image" src="${escapeHtml(getModelCover(model))}" alt="${escapeHtml(modelName)}" loading="lazy" draggable="false" />
         <div class="public-gallery-overlay model-card-center-overlay">
-          <h3>${escapeHtml(getModelDisplayName(model))}</h3>
+          <h3${modelNameClass}>${escapeHtml(modelName)}</h3>
           <p>${escapeHtml(subtitle)}</p>
         </div>
       </div>

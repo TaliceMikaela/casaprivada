@@ -128,5 +128,48 @@
         "description": "Clique para ampliar"
       }
     ]
+  },
+  {
+    "id": "ashleycubana23anos-20260610-212234",
+    "name": "Ashley Cubana",
+    "age": "23 anos",
+    "sign": "",
+    "city": "",
+    "tagline": "Clique para ver a galeria individual.",
+    "description": "Galeria individual de AshleyCubana.",
+    "folder": "static/img/modelos/AshleyCubana23anos_20260610_212234",
+    "cover": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto1.jpg",
+        "alt": "AshleyCubana • Foto 1",
+        "title": "AshleyCubana • Foto 1",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto2.jpg",
+        "alt": "AshleyCubana • Foto 2",
+        "title": "AshleyCubana • Foto 2",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto3.jpg",
+        "alt": "AshleyCubana • Foto 3",
+        "title": "AshleyCubana • Foto 3",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto4.jpg",
+        "alt": "AshleyCubana • Foto 4",
+        "title": "AshleyCubana • Foto 4",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/AshleyCubana23anos_20260610_212234/foto5.jpg",
+        "alt": "AshleyCubana • Foto 5",
+        "title": "AshleyCubana • Foto 5",
+        "description": "Clique para ampliar"
+      }
+    ]
   }
 ];
