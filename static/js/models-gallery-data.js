@@ -171,5 +171,54 @@
         "description": "Clique para ampliar"
       }
     ]
+  },
+  {
+    "id": "isisferrari22anos-20260610-220227",
+    "name": "Isis Ferrari",
+    "age": "22 anos",
+    "sign": "",
+    "city": "",
+    "tagline": "Clique para ver a galeria individual.",
+    "description": "Galeria individual de Isis Ferrari.",
+    "folder": "static/img/modelos/IsisFerrari22anos_20260610_220227",
+    "cover": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto1.jpg",
+        "alt": "Isis Ferrari • Foto 1",
+        "title": "Isis Ferrari • Foto 1",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto2.jpg",
+        "alt": "Isis Ferrari • Foto 2",
+        "title": "Isis Ferrari • Foto 2",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto3.jpg",
+        "alt": "Isis Ferrari • Foto 3",
+        "title": "Isis Ferrari • Foto 3",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto4.jpg",
+        "alt": "Isis Ferrari • Foto 4",
+        "title": "Isis Ferrari • Foto 4",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto5.jpg",
+        "alt": "Isis Ferrari • Foto 5",
+        "title": "Isis Ferrari • Foto 5",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/IsisFerrari22anos_20260610_220227/foto6.jpg",
+        "alt": "Isis Ferrari • Foto 6",
+        "title": "Isis Ferrari • Foto 6",
+        "description": "Clique para ampliar"
+      }
+    ]
   }
 ];
