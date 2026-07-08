@@ -183,5 +183,48 @@
         "description": "Clique para ampliar"
       }
     ]
+  },
+  {
+    "id": "fernanda35anos-20260708-160200",
+    "name": "Fernanda",
+    "age": "35 anos",
+    "sign": "",
+    "city": "",
+    "tagline": "Clique para ver a galeria individual.",
+    "description": "Galeria individual de Fernanda.",
+    "folder": "static/img/modelos/Fernanda35anos_20260708_160200",
+    "cover": "static/img/modelos/Fernanda35anos_20260708_160200/foto1.jpg",
+    "gallery": [
+      {
+        "src": "static/img/modelos/Fernanda35anos_20260708_160200/foto1.jpg",
+        "alt": "Fernanda • Foto 1",
+        "title": "Fernanda • Foto 1",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Fernanda35anos_20260708_160200/foto2.jpg",
+        "alt": "Fernanda • Foto 2",
+        "title": "Fernanda • Foto 2",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Fernanda35anos_20260708_160200/foto3.jpg",
+        "alt": "Fernanda • Foto 3",
+        "title": "Fernanda • Foto 3",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Fernanda35anos_20260708_160200/foto4.jpg",
+        "alt": "Fernanda • Foto 4",
+        "title": "Fernanda • Foto 4",
+        "description": "Clique para ampliar"
+      },
+      {
+        "src": "static/img/modelos/Fernanda35anos_20260708_160200/foto5.jpg",
+        "alt": "Fernanda • Foto 5",
+        "title": "Fernanda • Foto 5",
+        "description": "Clique para ampliar"
+      }
+    ]
   }
 ];
