@@ -130,61 +130,6 @@
     ]
   },
   {
-    "id": "rubia18anos-20260610-225212",
-    "name": "Rubia",
-    "age": "18 anos",
-    "sign": "",
-    "city": "",
-    "tagline": "Clique para ver a galeria individual.",
-    "description": "Galeria individual de Rubia.",
-    "folder": "static/img/modelos/Rubia18anos_20260610_225212",
-    "cover": "static/img/modelos/Rubia18anos_20260610_225212/foto1.jpg",
-    "gallery": [
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto1.jpg",
-        "alt": "Rubia • Foto 1",
-        "title": "Rubia • Foto 1",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto2.jpg",
-        "alt": "Rubia • Foto 2",
-        "title": "Rubia • Foto 2",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto3.jpg",
-        "alt": "Rubia • Foto 3",
-        "title": "Rubia • Foto 3",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto4.jpg",
-        "alt": "Rubia • Foto 4",
-        "title": "Rubia • Foto 4",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto5.jpg",
-        "alt": "Rubia • Foto 5",
-        "title": "Rubia • Foto 5",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto6.jpg",
-        "alt": "Rubia • Foto 6",
-        "title": "Rubia • Foto 6",
-        "description": "Clique para ampliar"
-      },
-      {
-        "src": "static/img/modelos/Rubia18anos_20260610_225212/foto7.jpg",
-        "alt": "Rubia • Foto 7",
-        "title": "Rubia • Foto 7",
-        "description": "Clique para ampliar"
-      }
-    ]
-  },
-  {
     "id": "fernanda35anos-20260708-160200",
     "name": "Fernanda",
     "age": "35 anos",
