@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Administração | Casa dos Prazeres</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/admin.css">
+</head>
+
+<body class="admin-body">
+
+  <main class="admin-login-page">
+
+    <section class="admin-login-card glass">
+
+      <header class="admin-login-header">
+
+        <img
+          class="admin-login-logo"
+          src="static/img/logo-casa-dos-prazeres.png"
+          alt="Casa dos Prazeres Privé Lounge"
+        >
+
+        <p class="eyebrow">Área restrita</p>
+
+        <h1>Painel administrativo</h1>
+
+        <p class="muted">
+          Entre com seu e-mail e senha para administrar modelos e galerias.
+        </p>
+
+      </header>
+
+      <form id="adminLoginForm" class="admin-login-form">
+
+        <label for="adminEmail">
+          E-mail
+        </label>
+
+        <input
+          id="adminEmail"
+          name="email"
+          type="email"
+          autocomplete="username"
+          required
+        >
+
+        <label for="adminPassword">
+          Senha
+        </label>
+
+        <input
+          id="adminPassword"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          id="adminLoginButton"
+          class="btn btn-primary"
+          type="submit"
+        >
+          Entrar
+        </button>
+
+        <p
+          id="adminLoginMessage"
+          class="admin-login-message"
+          role="alert"
+          aria-live="polite"
+        ></p>
+
+      </form>
+
+      <a class="admin-back-link" href="index.html">
+        Voltar ao site
+      </a>
+
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="static/js/supabase-config.js"></script>
+  <script src="static/js/admin-login.js"></script>
+
+</body>
+</html>

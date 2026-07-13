@@ -10,14 +10,7 @@
   <link rel="stylesheet" href="static/css/style.css" />
 </head>
 <body>
-  <div id="securityOverlay" class="security-overlay hidden" aria-hidden="true" role="alertdialog" aria-modal="true" aria-label="Conteúdo protegido">
-    <div class="security-overlay-box glass">
-      <strong>⚠️ Conteúdo protegido</strong>
-      <p>É proibida a captura, gravação, cópia, reprodução ou compartilhamento deste conteúdo sem autorização.</p>
-      <p>O uso indevido de imagens, vídeos ou informações deste site poderá gerar responsabilização civil e criminal, conforme a legislação aplicável.</p>
-      <p>Ao continuar navegando, você declara estar ciente dessas condições.</p>
-    </div>
-  </div>
+  
 
   <div id="ageGate" class="age-gate" aria-hidden="false">
     <div class="age-gate-backdrop"></div>
@@ -41,11 +34,12 @@
           <small>Privé Lounge</small>
         </div>
       </div>
-      <div class="nav-links">
-        <a href="#sobre">Sobre</a>
-        <a href="#conheca-casa">Conheça a casa</a>
-        <a href="#modelos">Modelos</a>
-      </div>
+     <div class="nav-links">
+  <a href="#sobre">Sobre</a>
+  <a href="#conheca-casa">Conheça a casa</a>
+  <a href="#modelos">Modelos</a>
+  <a href="admin.html" class="admin-access-link">Área administrativa</a>
+</div>
     </nav>
 
     <section class="hero-content container">
@@ -71,7 +65,7 @@
           <li>Experiência marcada por descrição, respeito e sigilo.</li>
         </ol>
         <p class="warning">
-          A galeria do ambiente agora funciona direto pelo repositório: você coloca as imagens na pasta do projeto, versiona no Git e publica no servidor.
+          As galerias são administradas pelo painel: novas modelos e fotos publicadas aparecem no site sem alterar o código.
         </p>
       </div>
     </section>
@@ -110,7 +104,7 @@
       </div>
 
       <div id="publicGalleryEmpty" class="empty-state glass hidden">
-        Nenhuma foto do ambiente foi publicada ainda. Adicione as imagens em <strong>static/img/casa</strong> e atualize o arquivo <strong>static/js/house-gallery-data.js</strong>.
+        Nenhuma foto do ambiente foi publicada ainda.
       </div>
 
       <div id="publicGalleryGrid" class="public-gallery-grid" aria-live="polite"></div>
@@ -128,7 +122,7 @@
       </div>
 
       <div id="modelsEmpty" class="empty-state glass hidden">
-Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/models-gallery-data.js</strong>.
+Nenhuma modelo publicada no momento.
       </div>
 
       <div id="modelsGrid" class="public-gallery-grid models-public-grid" aria-live="polite"></div>
@@ -146,6 +140,96 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
           </div>
         </div>
         <div id="modelGalleryGrid" class="public-gallery-grid model-photos-grid"></div>
+
+        <div id="modelInteractionUnavailable" class="model-interaction-unavailable hidden" role="status"></div>
+
+        <div id="modelInteractions" class="model-interactions hidden">
+          <section class="model-feedback-section" aria-labelledby="modelReviewsTitle">
+            <div class="model-feedback-header">
+              <div>
+                <p class="eyebrow">Avaliações</p>
+                <h4 id="modelReviewsTitle">Avalie esta modelo</h4>
+                <p class="muted">As avaliações passam por aprovação antes de aparecer no site.</p>
+              </div>
+
+              <div class="model-rating-summary" aria-label="Resumo das avaliações">
+                <strong id="modelAverageScore">—</strong>
+                <span id="modelAverageStars" class="model-stars-display" aria-hidden="true">☆☆☆☆☆</span>
+                <small id="modelReviewCount">Nenhuma avaliação publicada</small>
+              </div>
+            </div>
+
+            <form id="modelReviewForm" class="model-public-form" novalidate>
+              <div class="model-form-grid">
+                <label class="model-form-field">
+                  <span>Seu nome ou apelido <small>(opcional)</small></span>
+                  <input id="modelReviewName" name="nome" type="text" maxlength="60" autocomplete="nickname" placeholder="Como deseja aparecer">
+                </label>
+
+                <fieldset class="model-rating-field">
+                  <legend>Sua nota</legend>
+                  <div id="modelRatingPicker" class="model-rating-picker" role="radiogroup" aria-label="Nota de 1 a 5 estrelas">
+                    <button type="button" data-rating-value="1" role="radio" aria-checked="false" aria-label="1 estrela">★</button>
+                    <button type="button" data-rating-value="2" role="radio" aria-checked="false" aria-label="2 estrelas">★</button>
+                    <button type="button" data-rating-value="3" role="radio" aria-checked="false" aria-label="3 estrelas">★</button>
+                    <button type="button" data-rating-value="4" role="radio" aria-checked="false" aria-label="4 estrelas">★</button>
+                    <button type="button" data-rating-value="5" role="radio" aria-checked="false" aria-label="5 estrelas">★</button>
+                  </div>
+                  <input id="modelReviewRating" name="nota" type="hidden" value="">
+                </fieldset>
+              </div>
+
+              <label class="model-honeypot" aria-hidden="true">
+                Empresa
+                <input id="modelReviewCompany" name="empresa" type="text" tabindex="-1" autocomplete="off">
+              </label>
+
+              <div class="model-form-actions">
+                <button id="modelReviewSubmit" class="btn btn-primary btn-small" type="submit">Enviar avaliação</button>
+                <p id="modelReviewFeedback" class="model-form-feedback" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <div id="modelReviewsList" class="model-feedback-list" aria-live="polite"></div>
+          </section>
+
+          <section class="model-feedback-section model-messages-section" aria-labelledby="modelMessagesTitle">
+            <div class="model-feedback-header">
+              <div>
+                <p class="eyebrow">Mensagens</p>
+                <h4 id="modelMessagesTitle">Deixe uma mensagem para esta modelo</h4>
+                <p class="muted">A mensagem será publicada somente depois da moderação.</p>
+              </div>
+            </div>
+
+            <form id="modelMessageForm" class="model-public-form" novalidate>
+              <div class="model-form-grid">
+                <label class="model-form-field">
+                  <span>Seu nome ou apelido <small>(opcional)</small></span>
+                  <input id="modelMessageName" name="nome" type="text" maxlength="60" autocomplete="nickname" placeholder="Como deseja aparecer">
+                </label>
+
+                <label class="model-form-field model-form-field-wide">
+                  <span>Mensagem</span>
+                  <textarea id="modelMessageText" name="mensagem" maxlength="1000" rows="4" required placeholder="Escreva sua mensagem com respeito"></textarea>
+                  <small>Máximo de 1.000 caracteres.</small>
+                </label>
+              </div>
+
+              <label class="model-honeypot" aria-hidden="true">
+                Website
+                <input id="modelMessageWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+              </label>
+
+              <div class="model-form-actions">
+                <button id="modelMessageSubmit" class="btn btn-primary btn-small" type="submit">Enviar mensagem</button>
+                <p id="modelMessageFeedback" class="model-form-feedback" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <div id="modelMessagesList" class="model-feedback-list model-message-list" aria-live="polite"></div>
+          </section>
+        </div>
       </section>
     </section>
 
@@ -215,7 +299,7 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
           <div>
             <p><strong>Cookies necessários:</strong> guardam sua confirmação de +18 e sua escolha sobre esta política.</p>
             <p><strong>Cache do navegador:</strong> ajuda o site a carregar imagens, estilos e scripts mais rápido.</p>
-            <p><strong>Armazenamento local:</strong> pode registrar preferências simples, como popup já exibido na sessão.</p>
+            <p><strong>Armazenamento local:</strong> pode registrar preferências simples, como popup já exibido na sessão, e um identificador técnico aleatório para limitar envios repetidos de avaliações e mensagens.</p>
             <p>Você pode limpar esses dados pelo navegador ou pelo botão abaixo. Ao limpar, o site poderá pedir nova confirmação de maioridade.</p>
           </div>
         </details>
@@ -228,10 +312,11 @@ Nenhuma modelo cadastrada no momento. Atualize o arquivo <strong>static/js/model
     </div>
   </aside>
 
-  <script src="static/js/auth.js"></script>
-  <script src="static/js/house-gallery-data.js"></script>
-  <script src="static/js/models-gallery-data.js"></script>
-  <script src="static/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="static/js/supabase-config.js"></script>
+
+<script src="static/js/house-gallery-data.js"></script>
+<script src="static/js/main.js"></script>
 </body>
 </html>
 

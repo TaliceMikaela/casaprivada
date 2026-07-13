@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Painel Administrativo | Casa dos Prazeres</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/admin.css">
+</head>
+
+<body class="admin-body">
+
+  <div
+    id="adminLoadingScreen"
+    class="admin-loading-screen"
+  >
+    <p>Verificando acesso...</p>
+  </div>
+
+  <div
+    id="adminPanel"
+    class="admin-layout"
+    hidden
+  >
+
+    <!-- =====================================================
+         MENU LATERAL
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+      <div class="admin-sidebar-brand">
+
+        <img
+          src="static/img/logo-casa-dos-prazeres.png"
+          alt="Casa dos Prazeres"
+          class="admin-sidebar-logo"
+        >
+
+        <div>
+          <span class="admin-sidebar-eyebrow">
+            Administração
+          </span>
+
+          <strong>Casa dos Prazeres</strong>
+        </div>
+
+      </div>
+
+      <nav
+        class="admin-navigation"
+        aria-label="Menu administrativo"
+      >
+
+        <button
+          class="admin-nav-button active"
+          type="button"
+          data-section="dashboard"
+        >
+          Visão geral
+        </button>
+
+        <button
+          class="admin-nav-button"
+          type="button"
+          data-section="modelos"
+        >
+          Modelos
+        </button>
+
+        <button
+          class="admin-nav-button"
+          type="button"
+          data-section="casa"
+        >
+          Galeria da casa
+        </button>
+
+        <button
+          class="admin-nav-button"
+          type="button"
+          data-section="avaliacoes"
+        >
+          Avaliações e mensagens
+        </button>
+
+      </nav>
+
+      <div class="admin-sidebar-footer">
+
+        <a
+          href="index.html"
+          class="admin-site-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Visualizar site
+        </a>
+
+        <button
+          id="adminLogoutButton"
+          class="admin-logout-button"
+          type="button"
+        >
+          Sair
+        </button>
+
+      </div>
+
+    </aside>
+
+    <!-- =====================================================
+         ÁREA PRINCIPAL
+         ===================================================== -->
+
+    <main class="admin-main">
+
+      <header class="admin-topbar">
+
+        <div>
+          <p class="eyebrow">
+            Painel administrativo
+          </p>
+
+          <h1 id="adminPageTitle">
+            Visão geral
+          </h1>
+        </div>
+
+        <div class="admin-user-info">
+
+          <span id="adminUserName">
+            Administrador
+          </span>
+
+          <small id="adminUserRole">
+            Carregando...
+          </small>
+
+        </div>
+
+      </header>
+
+      <!-- ===================================================
+           VISÃO GERAL
+           =================================================== -->
+
+      <section
+        id="section-dashboard"
+        class="admin-section active"
+        data-admin-section="dashboard"
+      >
+
+        <div class="admin-stat-grid">
+
+          <article class="admin-stat-card">
+            <span>Modelos cadastradas</span>
+            <strong id="statTotalModelos">0</strong>
+          </article>
+
+          <article class="admin-stat-card">
+            <span>Modelos publicadas</span>
+            <strong id="statModelosPublicadas">0</strong>
+          </article>
+
+          <article class="admin-stat-card">
+            <span>Fotos das modelos</span>
+            <strong id="statFotosModelos">0</strong>
+          </article>
+
+          <article class="admin-stat-card">
+            <span>Fotos da casa</span>
+            <strong id="statFotosCasa">0</strong>
+          </article>
+
+        </div>
+
+        <article class="admin-content-card">
+
+          <header class="admin-card-header">
+            <div>
+              <p class="eyebrow">Resumo</p>
+              <h2>Gerenciamento do site</h2>
+            </div>
+          </header>
+
+          <p class="muted">
+            Use o menu lateral para cadastrar modelos, organizar
+            fotografias e controlar o conteúdo publicado no site.
+          </p>
+
+        </article>
+
+      </section>
+
+      <!-- ===================================================
+           MODELOS
+           =================================================== -->
+
+      <section
+        id="section-modelos"
+        class="admin-section"
+        data-admin-section="modelos"
+        hidden
+      >
+
+        <article class="admin-content-card">
+
+          <header class="admin-card-header">
+
+            <div>
+              <p class="eyebrow">Galeria</p>
+              <h2>Modelos cadastradas</h2>
+            </div>
+
+            <button
+              id="novaModeloButton"
+              class="btn btn-primary"
+              type="button"
+            >
+              Nova modelo
+            </button>
+
+          </header>
+
+          <div
+            id="modelosFeedback"
+            class="admin-feedback"
+            aria-live="polite"
+          ></div>
+
+          <div
+            id="modelosList"
+            class="admin-table-wrapper"
+          >
+            <p class="muted">
+              Carregando modelos...
+            </p>
+          </div>
+
+        </article>
+
+      </section>
+
+      <!-- ===================================================
+           GALERIA DA CASA
+           =================================================== -->
+
+      <section
+        id="section-casa"
+        class="admin-section"
+        data-admin-section="casa"
+        hidden
+      >
+
+        <article class="admin-content-card">
+
+          <header class="admin-card-header">
+
+            <div>
+              <p class="eyebrow">Ambientes</p>
+              <h2>Fotos da casa</h2>
+            </div>
+
+            <button
+              id="novaFotoCasaButton"
+              class="btn btn-primary"
+              type="button"
+            >
+              Adicionar foto
+            </button>
+
+          </header>
+
+          <div
+            id="casaFotosFeedback"
+            class="admin-feedback"
+            aria-live="polite"
+          ></div>
+
+          <div
+            id="casaFotosList"
+            class="admin-gallery-grid"
+          >
+            <p class="muted">
+              Carregando fotos da casa...
+            </p>
+          </div>
+
+        </article>
+
+      </section>
+
+      <!-- ===================================================
+           AVALIAÇÕES E MENSAGENS
+           =================================================== -->
+
+      <section
+        id="section-avaliacoes"
+        class="admin-section"
+        data-admin-section="avaliacoes"
+        hidden
+      >
+
+        <article class="admin-content-card">
+          <header class="admin-card-header admin-moderation-header">
+            <div>
+              <p class="eyebrow">Moderação</p>
+              <h2>Avaliações e mensagens por modelo</h2>
+              <p class="muted">Somente conteúdos aprovados aparecem no site público.</p>
+            </div>
+
+            <button id="recarregarModeracaoButton" class="admin-action-button" type="button">
+              Atualizar
+            </button>
+          </header>
+
+          <div class="admin-moderation-summary">
+            <article>
+              <span>Avaliações pendentes</span>
+              <strong id="avaliacoesPendentesCount">0</strong>
+            </article>
+            <article>
+              <span>Mensagens pendentes</span>
+              <strong id="mensagensPendentesCount">0</strong>
+            </article>
+          </div>
+
+          <div class="admin-moderation-filters">
+            <label class="admin-form-field">
+              <span>Modelo</span>
+              <select id="moderacaoFiltroModelo">
+                <option value="">Todas as modelos</option>
+              </select>
+            </label>
+
+            <label class="admin-form-field">
+              <span>Status</span>
+              <select id="moderacaoFiltroStatus">
+                <option value="">Todos os status</option>
+                <option value="pendente">Pendente</option>
+                <option value="aprovada">Aprovada</option>
+                <option value="rejeitada">Rejeitada</option>
+                <option value="oculta">Oculta</option>
+              </select>
+            </label>
+          </div>
+        </article>
+
+        <article class="admin-content-card admin-moderation-card">
+          <header class="admin-card-header">
+            <div>
+              <p class="eyebrow">Estrelas</p>
+              <h2>Avaliações</h2>
+            </div>
+          </header>
+
+          <div id="avaliacoesAdminFeedback" class="admin-feedback" aria-live="polite"></div>
+          <div id="avaliacoesAdminList" class="admin-table-wrapper">
+            <p class="muted">Carregando avaliações...</p>
+          </div>
+        </article>
+
+        <article class="admin-content-card admin-moderation-card">
+          <header class="admin-card-header">
+            <div>
+              <p class="eyebrow">Recados</p>
+              <h2>Mensagens</h2>
+            </div>
+          </header>
+
+          <div id="mensagensAdminFeedback" class="admin-feedback" aria-live="polite"></div>
+          <div id="mensagensAdminList" class="admin-table-wrapper">
+            <p class="muted">Carregando mensagens...</p>
+          </div>
+        </article>
+
+      </section>
+
+    </main>
+
+  </div>
+  <!-- =====================================================
+     MODAL: CADASTRO E EDIÇÃO DE MODELO
+     ===================================================== -->
+
+<div
+  id="modeloModal"
+  class="admin-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modeloModalTitle"
+  hidden
+>
+
+  <div
+    id="modeloModalOverlay"
+    class="admin-modal-overlay"
+  ></div>
+
+  <section class="admin-modal-card">
+
+    <header class="admin-modal-header">
+
+      <div>
+        <p class="eyebrow">Cadastro</p>
+
+        <h2 id="modeloModalTitle">
+          Nova modelo
+        </h2>
+      </div>
+
+      <button
+        id="fecharModeloModalButton"
+        class="admin-modal-close"
+        type="button"
+        aria-label="Fechar formulário"
+      >
+        ×
+      </button>
+
+    </header>
+
+    <form id="modeloForm" class="admin-form">
+
+      <input
+        id="modeloId"
+        name="id"
+        type="hidden"
+      >
+
+      <div class="admin-form-grid">
+
+        <div class="admin-form-field">
+          <label for="modeloNome">
+            Nome de exibição *
+          </label>
+
+          <input
+            id="modeloNome"
+            name="nome"
+            type="text"
+            maxlength="100"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloSlug">
+            Identificador da URL *
+          </label>
+
+          <input
+            id="modeloSlug"
+            name="slug"
+            type="text"
+            maxlength="120"
+            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+            placeholder="exemplo: nome-da-modelo"
+            autocomplete="off"
+            required
+          >
+
+          <small>
+            Use letras minúsculas, números e hífens.
+          </small>
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloIdade">
+            Idade *
+          </label>
+
+          <input
+            id="modeloIdade"
+            name="idade"
+            type="number"
+            min="18"
+            max="99"
+            required
+          >
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloCidade">
+            Cidade
+          </label>
+
+          <input
+            id="modeloCidade"
+            name="cidade"
+            type="text"
+            maxlength="100"
+            autocomplete="off"
+          >
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloSigno">
+            Signo
+          </label>
+
+          <select
+            id="modeloSigno"
+            name="signo"
+          >
+            <option value="">Não informado</option>
+            <option value="Áries">Áries</option>
+            <option value="Touro">Touro</option>
+            <option value="Gêmeos">Gêmeos</option>
+            <option value="Câncer">Câncer</option>
+            <option value="Leão">Leão</option>
+            <option value="Virgem">Virgem</option>
+            <option value="Libra">Libra</option>
+            <option value="Escorpião">Escorpião</option>
+            <option value="Sagitário">Sagitário</option>
+            <option value="Capricórnio">Capricórnio</option>
+            <option value="Aquário">Aquário</option>
+            <option value="Peixes">Peixes</option>
+          </select>
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloOrdem">
+            Ordem de exibição
+          </label>
+
+          <input
+            id="modeloOrdem"
+            name="ordem"
+            type="number"
+            min="0"
+            value="0"
+            required
+          >
+        </div>
+
+        <div class="admin-form-field">
+          <label for="modeloStatus">
+            Status *
+          </label>
+
+          <select
+            id="modeloStatus"
+            name="status"
+            required
+          >
+            <option value="rascunho">
+              Rascunho
+            </option>
+
+            <option value="publicada">
+              Publicada
+            </option>
+
+            <option value="oculta">
+              Oculta
+            </option>
+
+            <option value="arquivada">
+              Arquivada
+            </option>
+          </select>
+        </div>
+
+        <div class="admin-form-field admin-form-checkbox-field">
+
+          <label class="admin-checkbox-label">
+
+            <input
+              id="modeloDestaque"
+              name="destaque"
+              type="checkbox"
+            >
+
+            <span>
+              Exibir como destaque
+            </span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+      <div class="admin-form-field">
+
+        <label for="modeloDescricao">
+          Descrição
+        </label>
+
+        <textarea
+          id="modeloDescricao"
+          name="descricao"
+          rows="6"
+          maxlength="2000"
+        ></textarea>
+
+        <small>
+          Texto apresentado na galeria individual da modelo.
+        </small>
+
+      </div>
+
+      <div
+        id="modeloFormFeedback"
+        class="admin-feedback"
+        aria-live="polite"
+      ></div>
+
+      <footer class="admin-form-actions">
+
+        <button
+          id="cancelarModeloButton"
+          class="admin-secondary-button"
+          type="button"
+        >
+          Cancelar
+        </button>
+
+        <button
+          id="salvarModeloButton"
+          class="btn btn-primary"
+          type="submit"
+        >
+          Salvar modelo
+        </button>
+
+      </footer>
+
+    </form>
+
+  </section>
+
+</div>
+<!-- =====================================================
+     MODAL: FOTOS DA MODELO
+     ===================================================== -->
+
+<div
+  id="modeloFotosModal"
+  class="admin-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modeloFotosModalTitle"
+  hidden
+>
+  <div
+    id="modeloFotosModalOverlay"
+    class="admin-modal-overlay"
+  ></div>
+
+  <section class="admin-modal-card admin-modal-card-large">
+
+    <header class="admin-modal-header">
+
+      <div>
+        <p class="eyebrow">Galeria da modelo</p>
+
+        <h2 id="modeloFotosModalTitle">
+          Fotos da modelo
+        </h2>
+
+        <p
+          id="modeloFotosModalSubtitle"
+          class="muted"
+        ></p>
+      </div>
+
+      <button
+        id="fecharModeloFotosModalButton"
+        class="admin-modal-close"
+        type="button"
+        aria-label="Fechar galeria"
+      >
+        ×
+      </button>
+
+    </header>
+
+    <input
+      id="modeloFotosModeloId"
+      type="hidden"
+    >
+
+    <!-- UPLOAD -->
+
+    <section class="admin-upload-section">
+
+      <div class="admin-upload-header">
+
+        <div>
+          <h3>Adicionar fotos</h3>
+
+          <p class="muted">
+            Selecione uma ou várias imagens da modelo.
+          </p>
+        </div>
+
+      </div>
+
+      <form
+        id="modeloFotosUploadForm"
+        class="admin-upload-form"
+      >
+
+        <div class="admin-form-field">
+
+          <label for="modeloFotosArquivos">
+            Arquivos *
+          </label>
+
+          <input
+            id="modeloFotosArquivos"
+            name="arquivos"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            required
+          >
+
+          <small>
+            Formatos permitidos: JPG, JPEG, JFIF, PNG e WebP.
+            Máximo de 8 MB por arquivo. Quando a modelo já estiver publicada,
+            o painel selecionará “Publicada” automaticamente.
+          </small>
+
+        </div>
+
+        <div class="admin-form-grid">
+
+          <div class="admin-form-field">
+
+            <label for="modeloFotosStatus">
+              Status inicial
+            </label>
+
+            <select
+              id="modeloFotosStatus"
+              name="status"
+            >
+              <option value="rascunho">
+                Rascunho
+              </option>
+
+              <option value="publicada">
+                Publicada
+              </option>
+
+              <option value="oculta">
+                Oculta
+              </option>
+            </select>
+
+          </div>
+
+          <div class="admin-form-field">
+
+            <label for="modeloFotosOrdemInicial">
+              Ordem inicial
+            </label>
+
+            <input
+              id="modeloFotosOrdemInicial"
+              name="ordemInicial"
+              type="number"
+              min="0"
+              value="0"
+            >
+
+          </div>
+
+        </div>
+
+        <div
+          id="modeloFotosUploadFeedback"
+          class="admin-feedback"
+          aria-live="polite"
+        ></div>
+
+        <div class="admin-form-actions">
+
+          <button
+            id="enviarModeloFotosButton"
+            class="btn btn-primary"
+            type="submit"
+          >
+            Enviar fotos
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+    <!-- LISTAGEM -->
+
+    <section class="admin-modelo-fotos-section">
+
+      <header class="admin-card-header">
+
+        <div>
+          <p class="eyebrow">Imagens cadastradas</p>
+          <h3>Galeria atual</h3>
+        </div>
+
+        <div class="admin-card-header-actions">
+          <button
+            id="publicarTodasFotosModeloButton"
+            class="admin-action-button"
+            type="button"
+          >
+            Publicar todas
+          </button>
+
+          <button
+            id="ocultarTodasFotosModeloButton"
+            class="admin-action-button"
+            type="button"
+          >
+            Ocultar todas
+          </button>
+        </div>
+
+      </header>
+
+      <div
+        id="modeloFotosList"
+        class="admin-gallery-grid"
+      >
+        <p class="muted">
+          Selecione uma modelo para carregar as fotos.
+        </p>
+      </div>
+
+    </section>
+
+  </section>
+
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="static/js/supabase-config.js"></script>
+  <script src="static/js/painel-admin.js"></script>
+
+</body>
+</html>

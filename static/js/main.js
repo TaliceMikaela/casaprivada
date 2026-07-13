@@ -26,6 +26,26 @@ const cookieConsentBanner = document.getElementById('cookieConsentBanner');
 const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
 const necessaryCookiesBtn = document.getElementById('necessaryCookiesBtn');
 const clearSiteDataBtn = document.getElementById('clearSiteDataBtn');
+const modelInteractionUnavailable = document.getElementById('modelInteractionUnavailable');
+const modelInteractions = document.getElementById('modelInteractions');
+const modelAverageScore = document.getElementById('modelAverageScore');
+const modelAverageStars = document.getElementById('modelAverageStars');
+const modelReviewCount = document.getElementById('modelReviewCount');
+const modelReviewsList = document.getElementById('modelReviewsList');
+const modelReviewForm = document.getElementById('modelReviewForm');
+const modelReviewName = document.getElementById('modelReviewName');
+const modelReviewRating = document.getElementById('modelReviewRating');
+const modelRatingPicker = document.getElementById('modelRatingPicker');
+const modelReviewCompany = document.getElementById('modelReviewCompany');
+const modelReviewSubmit = document.getElementById('modelReviewSubmit');
+const modelReviewFeedback = document.getElementById('modelReviewFeedback');
+const modelMessagesList = document.getElementById('modelMessagesList');
+const modelMessageForm = document.getElementById('modelMessageForm');
+const modelMessageName = document.getElementById('modelMessageName');
+const modelMessageText = document.getElementById('modelMessageText');
+const modelMessageWebsite = document.getElementById('modelMessageWebsite');
+const modelMessageSubmit = document.getElementById('modelMessageSubmit');
+const modelMessageFeedback = document.getElementById('modelMessageFeedback');
 
 
 const EVENT_POPUP_END_AT = '2026-05-11T00:00:00-03:00';
@@ -44,21 +64,218 @@ const EVENT_BANNER = {
 
 let lightboxItems = [];
 let lightboxCurrentIndex = -1;
+let currentInteractionModel = null;
+let modelInteractionRequestId = 0;
 
-const PUBLIC_GALLERY_ITEMS = Array.isArray(window.HOUSE_GALLERY_ITEMS) ? window.HOUSE_GALLERY_ITEMS : [];
-const MODELS_GALLERY_DATA = Array.isArray(window.MODELS_GALLERY_DATA) ? window.MODELS_GALLERY_DATA : [];
+const VISITOR_TOKEN_STORAGE_KEY = 'cdp_feedback_visitor_token';
 
-init();
+const LOCAL_HOUSE_GALLERY_ITEMS = Array.isArray(window.HOUSE_GALLERY_ITEMS)
+  ? window.HOUSE_GALLERY_ITEMS
+  : [];
 
-function init() {
+let PUBLIC_GALLERY_ITEMS = [...LOCAL_HOUSE_GALLERY_ITEMS];
+let MODELS_GALLERY_DATA = [];
+
+init().catch((error) => {
+  console.error('Erro ao inicializar o site:', error);
+});
+
+async function init() {
   renderPublicGallery(PUBLIC_GALLERY_ITEMS);
   renderModelsGallery(MODELS_GALLERY_DATA);
   bindLightboxEvents();
   bindModelsEvents();
+  bindModelInteractionEvents();
   bindEventPopup();
   bindCookieConsent();
   bindAgeGate();
   enableImageProtection();
+
+  await carregarGaleriasDoSupabase();
+}
+
+async function carregarGaleriasDoSupabase() {
+  const supabase = window.supabaseClient;
+
+  if (!supabase) {
+    console.warn('Supabase não carregado. A galeria de modelos não pôde ser exibida.');
+    return;
+  }
+
+  try {
+    const [modelosResultado, casaResultado] = await Promise.all([
+      supabase
+        .from('modelos')
+        .select('id, nome, slug, idade, cidade, signo, descricao, ordem, destaque')
+        .eq('status', 'publicada')
+        .order('ordem', { ascending: true })
+        .order('criado_em', { ascending: true }),
+
+      supabase
+        .from('casa_fotos')
+        .select('id, bucket, caminho_storage, titulo, descricao, texto_alternativo, ordem, destaque')
+        .eq('status', 'publicada')
+        .order('ordem', { ascending: true })
+        .order('criado_em', { ascending: true })
+    ]);
+
+    if (modelosResultado.error) {
+      throw modelosResultado.error;
+    }
+
+    if (casaResultado.error) {
+      throw casaResultado.error;
+    }
+
+    const modelosSupabase = await montarModelosSupabase(
+      modelosResultado.data || []
+    );
+
+    const fotosCasaSupabase = (casaResultado.data || [])
+      .map((foto) => ({
+        id: foto.id,
+        src: obterUrlPublicaStorage(
+          foto.bucket || 'galeria-publica',
+          foto.caminho_storage
+        ),
+        title: foto.titulo || 'Ambiente da casa',
+        description: foto.descricao || 'Toque para ampliar',
+        alt: foto.texto_alternativo || foto.titulo || 'Foto do ambiente da casa',
+        ordem: foto.ordem ?? 0,
+        destaque: Boolean(foto.destaque),
+        origem: 'supabase'
+      }))
+      .filter((foto) => foto.src);
+
+    MODELS_GALLERY_DATA = modelosSupabase;
+
+    PUBLIC_GALLERY_ITEMS = mesclarFotosCasa(
+      LOCAL_HOUSE_GALLERY_ITEMS,
+      fotosCasaSupabase
+    );
+
+    renderModelsGallery(MODELS_GALLERY_DATA);
+    renderPublicGallery(PUBLIC_GALLERY_ITEMS);
+  } catch (error) {
+    console.error(
+      'Não foi possível carregar as galerias do Supabase. A galeria de modelos ficou indisponível:',
+      error
+    );
+  }
+}
+
+async function montarModelosSupabase(modelos) {
+  if (!modelos.length) {
+    return [];
+  }
+
+  const supabase = window.supabaseClient;
+  const ids = modelos.map((modelo) => modelo.id);
+
+  const { data: fotos, error } = await supabase
+    .from('modelo_fotos')
+    .select(`
+      id,
+      modelo_id,
+      bucket,
+      caminho_storage,
+      titulo,
+      descricao,
+      texto_alternativo,
+      ordem,
+      capa
+    `)
+    .in('modelo_id', ids)
+    .eq('status', 'publicada')
+    .order('capa', { ascending: false })
+    .order('ordem', { ascending: true })
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const fotosPorModelo = new Map();
+
+  (fotos || []).forEach((foto) => {
+    const lista = fotosPorModelo.get(foto.modelo_id) || [];
+    const src = obterUrlPublicaStorage(
+      foto.bucket || 'galeria-publica',
+      foto.caminho_storage
+    );
+
+    if (src) {
+      lista.push({
+        id: foto.id,
+        src,
+        alt: foto.texto_alternativo || foto.titulo || 'Foto da modelo',
+        title: foto.titulo || 'Foto da modelo',
+        description: foto.descricao || 'Clique para ampliar',
+        capa: Boolean(foto.capa),
+        ordem: foto.ordem ?? 0
+      });
+    }
+
+    fotosPorModelo.set(foto.modelo_id, lista);
+  });
+
+  return modelos
+    .map((modelo) => {
+      const gallery = fotosPorModelo.get(modelo.id) || [];
+      const capa = gallery.find((foto) => foto.capa) || gallery[0];
+
+      return {
+        id: modelo.id,
+        slug: modelo.slug,
+        name: modelo.nome,
+        age: modelo.idade ? `${modelo.idade} anos` : '',
+        sign: modelo.signo || '',
+        city: modelo.cidade || '',
+        tagline: 'Clique para ver a galeria individual.',
+        description: modelo.descricao || `Galeria individual de ${modelo.nome}.`,
+        cover: capa?.src || '',
+        gallery,
+        ordem: modelo.ordem ?? 0,
+        destaque: Boolean(modelo.destaque),
+        origem: 'supabase'
+      };
+    })
+    .filter((modelo) => modelo.cover && modelo.gallery.length > 0);
+}
+
+function obterUrlPublicaStorage(bucket, caminhoStorage) {
+  if (!bucket || !caminhoStorage || !window.supabaseClient) {
+    return '';
+  }
+
+  const { data } = window.supabaseClient
+    .storage
+    .from(bucket)
+    .getPublicUrl(caminhoStorage);
+
+  return data?.publicUrl || '';
+}
+
+function normalizarChaveTexto(valor) {
+  return String(valor || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+
+function mesclarFotosCasa(fotosLocais, fotosSupabase) {
+  const titulosSupabase = new Set(
+    fotosSupabase.map((foto) => normalizarChaveTexto(foto.title))
+  );
+
+  const locaisSemDuplicidade = fotosLocais.filter((foto) => (
+    !titulosSupabase.has(normalizarChaveTexto(foto.title))
+  ));
+
+  return [...fotosSupabase, ...locaisSemDuplicidade];
 }
 
 function renderPublicGallery(items) {
@@ -393,8 +610,9 @@ function renderModelsGallery(models) {
     const metaText = buildModelMetaText(model);
     const subtitle = metaText || model.tagline || 'Clique para ver a galeria individual.';
     const modelName = getModelDisplayName(model);
-    const isAshleyCubana = String(model.id || '').toLowerCase().startsWith('ashleycubana');
-    const modelNameClass = isAshleyCubana ? ' class="model-name-compact"' : '';
+    const modelNameClass = modelName.length > 12
+      ? ' class="model-name-compact"'
+      : '';
 
     button.innerHTML = `
       <div class="public-gallery-media gallery-watermark">
@@ -458,11 +676,16 @@ function openModelGallery(index) {
     modelGalleryGrid.appendChild(button);
   });
 
+  openModelInteractions(model);
   modelGalleryPanel.classList.remove('hidden');
   modelGalleryPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeModelGallery() {
+  modelInteractionRequestId += 1;
+  currentInteractionModel = null;
+  modelInteractions?.classList.add('hidden');
+  modelInteractionUnavailable?.classList.add('hidden');
   modelGalleryPanel?.classList.add('hidden');
   document.getElementById('modelos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -480,6 +703,332 @@ function buildModelMetaText(model) {
     .join(' • ');
 }
 
+function bindModelInteractionEvents() {
+  modelRatingPicker?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-rating-value]');
+    if (!button) return;
+
+    const rating = Number(button.dataset.ratingValue);
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) return;
+
+    modelReviewRating.value = String(rating);
+    updateRatingPicker(rating);
+    showModelFeedback(modelReviewFeedback, '');
+  });
+
+  modelReviewForm?.addEventListener('submit', submitModelReview);
+  modelMessageForm?.addEventListener('submit', submitModelMessage);
+}
+
+function isSupabaseModel(model) {
+  return Boolean(
+    model?.origem === 'supabase' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(model.id || ''))
+  );
+}
+
+function openModelInteractions(model) {
+  currentInteractionModel = model;
+  modelInteractionRequestId += 1;
+
+  resetModelInteractionForms();
+
+  if (!isSupabaseModel(model) || !window.supabaseClient) {
+    modelInteractions?.classList.add('hidden');
+
+    if (modelInteractionUnavailable) {
+      modelInteractionUnavailable.textContent = 'Avaliações e mensagens serão habilitadas para esta modelo após a migração do cadastro antigo para o Supabase.';
+      modelInteractionUnavailable.classList.remove('hidden');
+    }
+
+    return;
+  }
+
+  modelInteractionUnavailable?.classList.add('hidden');
+  modelInteractions?.classList.remove('hidden');
+  loadModelInteractions(model, modelInteractionRequestId);
+}
+
+async function loadModelInteractions(model, requestId) {
+  if (!modelReviewsList || !modelMessagesList) return;
+
+  modelReviewsList.innerHTML = '<p class="model-feedback-loading">Carregando avaliações...</p>';
+  modelMessagesList.innerHTML = '<p class="model-feedback-loading">Carregando mensagens...</p>';
+  modelAverageScore.textContent = '—';
+  modelAverageStars.textContent = '☆☆☆☆☆';
+  modelReviewCount.textContent = 'Carregando avaliações';
+
+  try {
+    const supabase = window.supabaseClient;
+    const [summaryResult, reviewsResult, messagesResult] = await Promise.all([
+      supabase.rpc('obter_resumo_avaliacoes_modelo', {
+        p_modelo_id: model.id
+      }),
+      supabase
+        .from('avaliacoes_modelos')
+        .select('id, nome_cliente, nota, criado_em')
+        .eq('modelo_id', model.id)
+        .eq('status', 'aprovada')
+        .order('criado_em', { ascending: false })
+        .limit(12),
+      supabase
+        .from('mensagens_modelos')
+        .select('id, nome_cliente, mensagem, criado_em')
+        .eq('modelo_id', model.id)
+        .eq('status', 'aprovada')
+        .order('criado_em', { ascending: false })
+        .limit(20)
+    ]);
+
+    if (requestId !== modelInteractionRequestId || currentInteractionModel?.id !== model.id) {
+      return;
+    }
+
+    if (summaryResult.error) throw summaryResult.error;
+    if (reviewsResult.error) throw reviewsResult.error;
+    if (messagesResult.error) throw messagesResult.error;
+
+    const summary = Array.isArray(summaryResult.data)
+      ? summaryResult.data[0]
+      : summaryResult.data;
+
+    renderModelReviews(reviewsResult.data || [], summary || null);
+    renderModelMessages(messagesResult.data || []);
+  } catch (error) {
+    console.error('Erro ao carregar avaliações e mensagens:', error);
+
+    if (requestId !== modelInteractionRequestId) return;
+
+    modelReviewsList.innerHTML = '<p class="model-feedback-empty">Não foi possível carregar as avaliações agora.</p>';
+    modelMessagesList.innerHTML = '<p class="model-feedback-empty">Não foi possível carregar as mensagens agora.</p>';
+    modelReviewCount.textContent = 'Conteúdo temporariamente indisponível';
+  }
+}
+
+function renderModelReviews(reviews, summary = null) {
+  const fallbackCount = reviews.length;
+  const fallbackAverage = fallbackCount
+    ? reviews.reduce((total, review) => total + Number(review.nota || 0), 0) / fallbackCount
+    : 0;
+  const count = Number(summary?.quantidade ?? fallbackCount);
+  const average = Number(summary?.media ?? fallbackAverage);
+
+  modelAverageScore.textContent = count ? average.toFixed(1).replace('.', ',') : '—';
+  modelAverageStars.textContent = renderStarsText(Math.round(average));
+  modelReviewCount.textContent = count
+    ? `${count} ${count === 1 ? 'avaliação publicada' : 'avaliações publicadas'}`
+    : 'Nenhuma avaliação publicada';
+
+  if (!count) {
+    modelReviewsList.innerHTML = '<p class="model-feedback-empty">Ainda não há avaliações publicadas para esta modelo.</p>';
+    return;
+  }
+
+  modelReviewsList.innerHTML = reviews.slice(0, 12).map((review) => `
+    <article class="model-feedback-card">
+      <div class="model-feedback-card-header">
+        <strong>${escapeHtml(review.nome_cliente || 'Cliente')}</strong>
+        <time datetime="${escapeHtml(review.criado_em || '')}">${escapeHtml(formatPublicDate(review.criado_em))}</time>
+      </div>
+      <p class="model-stars-display" aria-label="${escapeHtml(review.nota)} de 5 estrelas">${renderStarsText(Number(review.nota))}</p>
+    </article>
+  `).join('');
+}
+
+function renderModelMessages(messages) {
+  if (!messages.length) {
+    modelMessagesList.innerHTML = '<p class="model-feedback-empty">Ainda não há mensagens publicadas para esta modelo.</p>';
+    return;
+  }
+
+  modelMessagesList.innerHTML = messages.map((message) => `
+    <article class="model-feedback-card">
+      <div class="model-feedback-card-header">
+        <strong>${escapeHtml(message.nome_cliente || 'Cliente')}</strong>
+        <time datetime="${escapeHtml(message.criado_em || '')}">${escapeHtml(formatPublicDate(message.criado_em))}</time>
+      </div>
+      <p>${escapeHtml(message.mensagem)}</p>
+    </article>
+  `).join('');
+}
+
+function renderStarsText(rating) {
+  const normalized = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+  return `${'★'.repeat(normalized)}${'☆'.repeat(5 - normalized)}`;
+}
+
+function formatPublicDate(value) {
+  if (!value) return '';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(date);
+}
+
+function updateRatingPicker(rating = 0) {
+  modelRatingPicker?.querySelectorAll('[data-rating-value]').forEach((button) => {
+    const value = Number(button.dataset.ratingValue);
+    const selected = value <= rating;
+    button.classList.toggle('active', selected);
+    button.setAttribute('aria-checked', value === rating ? 'true' : 'false');
+  });
+}
+
+function resetModelInteractionForms() {
+  modelReviewForm?.reset();
+  modelMessageForm?.reset();
+
+  if (modelReviewRating) modelReviewRating.value = '';
+  updateRatingPicker(0);
+  showModelFeedback(modelReviewFeedback, '');
+  showModelFeedback(modelMessageFeedback, '');
+}
+
+function showModelFeedback(element, message, type = '') {
+  if (!element) return;
+  element.textContent = message;
+  element.className = 'model-form-feedback';
+  if (type) element.classList.add(type);
+}
+
+function getOrCreateVisitorToken() {
+  let token = safeStorageGet('localStorage', VISITOR_TOKEN_STORAGE_KEY);
+  if (token && token.length >= 20) return token;
+
+  token = window.crypto?.randomUUID
+    ? window.crypto.randomUUID()
+    : `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+
+  safeStorageSet('localStorage', VISITOR_TOKEN_STORAGE_KEY, token);
+  return token;
+}
+
+function setPublicFormLoading(button, loading, defaultText) {
+  if (!button) return;
+  button.disabled = loading;
+  button.textContent = loading ? 'Enviando...' : defaultText;
+}
+
+async function submitModelReview(event) {
+  event.preventDefault();
+  showModelFeedback(modelReviewFeedback, '');
+
+  const model = currentInteractionModel;
+  const rating = Number(modelReviewRating?.value || 0);
+
+  if (!isSupabaseModel(model)) {
+    showModelFeedback(modelReviewFeedback, 'Esta modelo ainda não está disponível para avaliações.', 'error');
+    return;
+  }
+
+  if (modelReviewCompany?.value.trim()) {
+    showModelFeedback(modelReviewFeedback, 'Não foi possível enviar a avaliação.', 'error');
+    return;
+  }
+
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    showModelFeedback(modelReviewFeedback, 'Selecione uma nota de 1 a 5 estrelas.', 'error');
+    return;
+  }
+
+  setPublicFormLoading(modelReviewSubmit, true, 'Enviar avaliação');
+
+  try {
+    const { error } = await window.supabaseClient.rpc('enviar_avaliacao_modelo', {
+      p_modelo_id: model.id,
+      p_nome_cliente: modelReviewName?.value.trim() || null,
+      p_nota: rating,
+      p_cliente_token: getOrCreateVisitorToken()
+    });
+
+    if (error) throw error;
+
+    modelReviewForm.reset();
+    modelReviewRating.value = '';
+    updateRatingPicker(0);
+    showModelFeedback(modelReviewFeedback, 'Avaliação enviada. Ela aparecerá após aprovação.', 'success');
+  } catch (error) {
+    console.error('Erro ao enviar avaliação:', error);
+    showModelFeedback(modelReviewFeedback, translatePublicSubmissionError(error, 'avaliação'), 'error');
+  } finally {
+    setPublicFormLoading(modelReviewSubmit, false, 'Enviar avaliação');
+  }
+}
+
+async function submitModelMessage(event) {
+  event.preventDefault();
+  showModelFeedback(modelMessageFeedback, '');
+
+  const model = currentInteractionModel;
+  const message = modelMessageText?.value.trim() || '';
+
+  if (!isSupabaseModel(model)) {
+    showModelFeedback(modelMessageFeedback, 'Esta modelo ainda não está disponível para mensagens.', 'error');
+    return;
+  }
+
+  if (modelMessageWebsite?.value.trim()) {
+    showModelFeedback(modelMessageFeedback, 'Não foi possível enviar a mensagem.', 'error');
+    return;
+  }
+
+  if (message.length < 3 || message.length > 1000) {
+    showModelFeedback(modelMessageFeedback, 'Escreva uma mensagem entre 3 e 1.000 caracteres.', 'error');
+    return;
+  }
+
+  setPublicFormLoading(modelMessageSubmit, true, 'Enviar mensagem');
+
+  try {
+    const { error } = await window.supabaseClient.rpc('enviar_mensagem_modelo', {
+      p_modelo_id: model.id,
+      p_nome_cliente: modelMessageName?.value.trim() || null,
+      p_mensagem: message,
+      p_cliente_token: getOrCreateVisitorToken()
+    });
+
+    if (error) throw error;
+
+    modelMessageForm.reset();
+    showModelFeedback(modelMessageFeedback, 'Mensagem enviada. Ela aparecerá após aprovação.', 'success');
+  } catch (error) {
+    console.error('Erro ao enviar mensagem:', error);
+    showModelFeedback(modelMessageFeedback, translatePublicSubmissionError(error, 'mensagem'), 'error');
+  } finally {
+    setPublicFormLoading(modelMessageSubmit, false, 'Enviar mensagem');
+  }
+}
+
+function translatePublicSubmissionError(error, type) {
+  const message = String(error?.message || '').toUpperCase();
+
+  if (message.includes('AGUARDE_AVALIACAO')) {
+    return 'Aguarde 10 minutos antes de enviar outra avaliação para esta modelo.';
+  }
+
+  if (message.includes('AGUARDE_MENSAGEM')) {
+    return 'Aguarde 5 minutos antes de enviar outra mensagem para esta modelo.';
+  }
+
+  if (message.includes('MODELO_INDISPONIVEL')) {
+    return 'Esta modelo não está disponível para receber conteúdo agora.';
+  }
+
+  if (message.includes('NOTA_INVALIDA')) {
+    return 'Selecione uma nota válida de 1 a 5 estrelas.';
+  }
+
+  if (message.includes('MENSAGEM_INVALIDA')) {
+    return 'A mensagem deve ter entre 3 e 1.000 caracteres.';
+  }
+
+  return `Não foi possível enviar a ${type} agora. Tente novamente.`;
+}
 
 
 function bindCookieConsent() {
