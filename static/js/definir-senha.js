@@ -27,7 +27,7 @@
       : 'Salvar senha';
   }
 
-  async function validarConvite() {
+  async function validarLinkSenha() {
     if (!supabase) {
       mostrarMensagem(
         'Não foi possível conectar ao servidor.',
@@ -45,7 +45,7 @@
 
       if (!data.session?.user) {
         mostrarMensagem(
-          'Este convite é inválido, expirou ou já foi utilizado. Solicite um novo convite ao administrador.',
+          'Este link é inválido, expirou ou já foi utilizado. Solicite um novo convite ou uma nova redefinição ao administrador.',
           'error'
         );
         loginLink.hidden = false;
@@ -53,13 +53,13 @@
       }
 
       form.hidden = false;
-      mostrarMensagem('Convite validado. Defina sua senha.', 'success');
+      mostrarMensagem('Link validado. Defina sua nova senha.', 'success');
       senhaInput.focus();
 
     } catch (error) {
-      console.error('Erro ao validar convite:', error);
+      console.error('Erro ao validar link de senha:', error);
       mostrarMensagem(
-        'Não foi possível validar o convite.',
+        'Não foi possível validar o link de acesso.',
         'error'
       );
       loginLink.hidden = false;
@@ -119,5 +119,5 @@
     }
   });
 
-  validarConvite();
+  validarLinkSenha();
 })();

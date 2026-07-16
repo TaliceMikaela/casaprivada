@@ -3144,13 +3144,23 @@ function aplicarInterfacePorPerfil() {
                     </td>
                     <td>${quantidadePermissoes} de 9</td>
                     <td>
-                      <button
-                        class="admin-action-button"
-                        type="button"
-                        data-editar-usuario-modelo="${perfil.id}"
-                      >
-                        Editar
-                      </button>
+                      <div class="admin-table-actions">
+                        <button
+                          class="admin-action-button"
+                          type="button"
+                          data-editar-usuario-modelo="${perfil.id}"
+                        >
+                          Editar
+                        </button>
+
+                        <button
+                          class="admin-action-button"
+                          type="button"
+                          data-redefinir-senha-modelo="${perfil.id}"
+                        >
+                          Redefinir senha
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 `;
@@ -3158,6 +3168,70 @@ function aplicarInterfacePorPerfil() {
             </tbody>
           </table>
         `;
+    }
+
+    async function enviarRedefinicaoSenhaModelo(perfil, button) {
+        if (!perfil?.email) {
+            mostrarFeedbackUsuario(
+                'O usuário selecionado não possui e-mail válido.',
+                'error'
+            );
+            return;
+        }
+
+        const confirmou = window.confirm(
+            `Enviar um link de redefinição de senha para ${perfil.email}?`
+        );
+
+        if (!confirmou) {
+            return;
+        }
+
+        const textoOriginal = button?.textContent || 'Redefinir senha';
+
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+        }
+
+        mostrarFeedbackUsuario(
+            `Enviando redefinição de senha para ${perfil.email}...`
+        );
+
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(
+                perfil.email,
+                {
+                    redirectTo:
+                        'https://casadosprazeresvip.com.br/definir-senha.html'
+                }
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            mostrarFeedbackUsuario(
+                `E-mail de redefinição enviado para ${perfil.email}.`,
+                'success'
+            );
+        } catch (error) {
+            console.error(
+                'Erro ao enviar redefinição de senha:',
+                error
+            );
+
+            mostrarFeedbackUsuario(
+                error?.message ||
+                'Não foi possível enviar o e-mail de redefinição.',
+                'error'
+            );
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = textoOriginal;
+            }
+        }
     }
 
     async function extrairMensagemErroFuncao(error) {
@@ -3324,12 +3398,33 @@ function aplicarInterfacePorPerfil() {
 
         usuariosModeloList.addEventListener(
             'click',
-            function (event) {
-                const button = event.target.closest(
+            async function (event) {
+                const editarButton = event.target.closest(
                     '[data-editar-usuario-modelo]'
                 );
 
-                if (!button) {
+                if (editarButton) {
+                    const perfil = usuariosModeloCache.find(
+                        function (item) {
+                            return (
+                                item.id ===
+                                editarButton.dataset.editarUsuarioModelo
+                            );
+                        }
+                    );
+
+                    if (perfil) {
+                        editarUsuarioModelo(perfil);
+                    }
+
+                    return;
+                }
+
+                const redefinirButton = event.target.closest(
+                    '[data-redefinir-senha-modelo]'
+                );
+
+                if (!redefinirButton) {
                     return;
                 }
 
@@ -3337,13 +3432,16 @@ function aplicarInterfacePorPerfil() {
                     function (item) {
                         return (
                             item.id ===
-                            button.dataset.editarUsuarioModelo
+                            redefinirButton.dataset.redefinirSenhaModelo
                         );
                     }
                 );
 
                 if (perfil) {
-                    editarUsuarioModelo(perfil);
+                    await enviarRedefinicaoSenhaModelo(
+                        perfil,
+                        redefinirButton
+                    );
                 }
             }
         );

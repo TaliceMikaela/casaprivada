@@ -627,6 +627,12 @@
   background: rgba(200, 154, 61, 0.12);
 }
 
+.admin-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 
 /* ==========================================================
    GALERIA ADMINISTRATIVA
