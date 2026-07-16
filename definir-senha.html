@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Definir senha | Casa dos Prazeres</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/admin.css">
+</head>
+<body class="admin-body">
+
+  <main class="admin-login-page">
+    <section class="admin-login-card glass">
+
+      <header class="admin-login-header">
+        <img
+          class="admin-login-logo"
+          src="static/img/logo-casa-dos-prazeres.png"
+          alt="Casa dos Prazeres Privé Lounge"
+        >
+
+        <p class="eyebrow">Primeiro acesso</p>
+        <h1>Definir sua senha</h1>
+        <p class="muted">
+          Crie a senha que será usada na mesma tela de login do painel.
+        </p>
+      </header>
+
+      <form id="definirSenhaForm" class="admin-login-form" hidden>
+        <label for="novaSenha">Nova senha</label>
+        <input
+          id="novaSenha"
+          name="password"
+          type="password"
+          minlength="8"
+          autocomplete="new-password"
+          required
+        >
+
+        <label for="confirmarSenha">Confirmar senha</label>
+        <input
+          id="confirmarSenha"
+          name="confirmPassword"
+          type="password"
+          minlength="8"
+          autocomplete="new-password"
+          required
+        >
+
+        <button
+          id="salvarSenhaButton"
+          class="btn btn-primary"
+          type="submit"
+        >
+          Salvar senha
+        </button>
+      </form>
+
+      <p
+        id="definirSenhaMessage"
+        class="admin-login-message"
+        role="alert"
+        aria-live="polite"
+      >
+        Validando convite...
+      </p>
+
+      <a
+        id="irParaLoginLink"
+        class="admin-back-link"
+        href="admin.html"
+        hidden
+      >
+        Ir para o login
+      </a>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="static/js/supabase-config.js"></script>
+  <script src="static/js/definir-senha.js"></script>
+</body>
+</html>

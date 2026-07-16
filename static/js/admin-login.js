@@ -67,7 +67,14 @@
   async function consultarPerfilAdministrativo(usuarioId) {
     const { data, error } = await supabase
       .from('perfis_administrativos')
-      .select('id, nome, email, papel, ativo')
+      .select(`
+        id,
+        nome,
+        email,
+        papel,
+        ativo,
+        modelo_id
+      `)
       .eq('id', usuarioId)
       .maybeSingle();
 
@@ -132,7 +139,7 @@
         await encerrarAcessoInvalido();
 
         mostrarMensagem(
-          'Este usuário administrativo está bloqueado.',
+          'Este usuário está bloqueado.',
           'error'
         );
 
@@ -140,11 +147,11 @@
         return;
       }
 
-      if (!['administrador', 'editor'].includes(perfil.papel)) {
+      if (!['administrador', 'modelo'].includes(perfil.papel)) {
         await encerrarAcessoInvalido();
 
         mostrarMensagem(
-          'Este usuário não possui permissão administrativa.',
+          'Este usuário não possui permissão de acesso ao painel.',
           'error'
         );
 

@@ -98,70 +98,122 @@ async function carregarGaleriasDoSupabase() {
   const supabase = window.supabaseClient;
 
   if (!supabase) {
-    console.warn('Supabase não carregado. A galeria de modelos não pôde ser exibida.');
+    console.warn('Supabase não carregado. As galerias remotas não puderam ser exibidas.');
     return;
   }
 
-  try {
-    const [modelosResultado, casaResultado] = await Promise.all([
-      supabase
-        .from('modelos')
-        .select('id, nome, slug, idade, cidade, signo, descricao, ordem, destaque')
-        .eq('status', 'publicada')
-        .order('ordem', { ascending: true })
-        .order('criado_em', { ascending: true }),
+  /*
+   * As galerias são carregadas de forma independente.
+   * Antes, uma falha na consulta de fotos da casa interrompia também
+   * a galeria de modelos, mesmo quando as modelos estavam publicadas.
+   */
+  const resultados = await Promise.allSettled([
+    carregarModelosPublicados(supabase),
+    carregarFotosCasaPublicadas(supabase)
+  ]);
 
-      supabase
-        .from('casa_fotos')
-        .select('id, bucket, caminho_storage, titulo, descricao, texto_alternativo, ordem, destaque')
-        .eq('status', 'publicada')
-        .order('ordem', { ascending: true })
-        .order('criado_em', { ascending: true })
-    ]);
+  const modelosResultado = resultados[0];
+  const casaResultado = resultados[1];
 
-    if (modelosResultado.error) {
-      throw modelosResultado.error;
-    }
-
-    if (casaResultado.error) {
-      throw casaResultado.error;
-    }
-
-    const modelosSupabase = await montarModelosSupabase(
-      modelosResultado.data || []
-    );
-
-    const fotosCasaSupabase = (casaResultado.data || [])
-      .map((foto) => ({
-        id: foto.id,
-        src: obterUrlPublicaStorage(
-          foto.bucket || 'galeria-publica',
-          foto.caminho_storage
-        ),
-        title: foto.titulo || 'Ambiente da casa',
-        description: foto.descricao || 'Toque para ampliar',
-        alt: foto.texto_alternativo || foto.titulo || 'Foto do ambiente da casa',
-        ordem: foto.ordem ?? 0,
-        destaque: Boolean(foto.destaque),
-        origem: 'supabase'
-      }))
-      .filter((foto) => foto.src);
-
-    MODELS_GALLERY_DATA = modelosSupabase;
-
-    PUBLIC_GALLERY_ITEMS = mesclarFotosCasa(
-      LOCAL_HOUSE_GALLERY_ITEMS,
-      fotosCasaSupabase
-    );
-
-    renderModelsGallery(MODELS_GALLERY_DATA);
-    renderPublicGallery(PUBLIC_GALLERY_ITEMS);
-  } catch (error) {
+  if (modelosResultado.status === 'rejected') {
     console.error(
-      'Não foi possível carregar as galerias do Supabase. A galeria de modelos ficou indisponível:',
-      error
+      'Não foi possível carregar a galeria de modelos do Supabase:',
+      modelosResultado.reason
+    );
+
+    if (modelsEmpty) {
+      modelsEmpty.textContent = 'Não foi possível carregar as modelos agora. Atualize a página em instantes.';
+      modelsEmpty.classList.remove('hidden');
+    }
+  }
+
+  if (casaResultado.status === 'rejected') {
+    console.error(
+      'Não foi possível carregar as fotos da casa do Supabase. As fotos locais foram mantidas:',
+      casaResultado.reason
     );
   }
+}
+
+async function carregarModelosPublicados(supabase) {
+  const { data: modelos, error } = await supabase
+    .from('modelos')
+    .select(`
+      id,
+      nome,
+      slug,
+      idade,
+      cidade,
+      signo,
+      descricao,
+      ordem,
+      destaque,
+      criado_em
+    `)
+    .eq('status', 'publicada')
+    .order('ordem', { ascending: true })
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const modelosSupabase = await montarModelosSupabase(modelos || []);
+
+  MODELS_GALLERY_DATA = modelosSupabase;
+  renderModelsGallery(MODELS_GALLERY_DATA);
+
+  if ((modelos || []).length > 0 && modelosSupabase.length === 0) {
+    console.warn(
+      'Foram encontradas modelos publicadas, mas nenhuma foto publicada ficou disponível para montar os cards.'
+    );
+  }
+}
+
+async function carregarFotosCasaPublicadas(supabase) {
+  const { data: fotosCasa, error } = await supabase
+    .from('casa_fotos')
+    .select(`
+      id,
+      bucket,
+      caminho_storage,
+      titulo,
+      descricao,
+      texto_alternativo,
+      ordem,
+      destaque,
+      criado_em
+    `)
+    .eq('status', 'publicada')
+    .order('ordem', { ascending: true })
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  const fotosCasaSupabase = (fotosCasa || [])
+    .map((foto) => ({
+      id: foto.id,
+      src: obterUrlPublicaStorage(
+        foto.bucket || 'galeria-publica',
+        foto.caminho_storage
+      ),
+      title: foto.titulo || 'Ambiente da casa',
+      description: foto.descricao || 'Toque para ampliar',
+      alt: foto.texto_alternativo || foto.titulo || 'Foto do ambiente da casa',
+      ordem: foto.ordem ?? 0,
+      destaque: Boolean(foto.destaque),
+      origem: 'supabase'
+    }))
+    .filter((foto) => foto.src);
+
+  PUBLIC_GALLERY_ITEMS = mesclarFotosCasa(
+    LOCAL_HOUSE_GALLERY_ITEMS,
+    fotosCasaSupabase
+  );
+
+  renderPublicGallery(PUBLIC_GALLERY_ITEMS);
 }
 
 async function montarModelosSupabase(modelos) {

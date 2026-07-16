@@ -77,6 +77,7 @@
         </button>
 
         <button
+          id="navModelosButton"
           class="admin-nav-button"
           type="button"
           data-section="modelos"
@@ -85,19 +86,32 @@
         </button>
 
         <button
+          id="navCasaButton"
           class="admin-nav-button"
           type="button"
           data-section="casa"
+          data-admin-only
         >
           Galeria da casa
         </button>
 
         <button
+          id="navAvaliacoesButton"
           class="admin-nav-button"
           type="button"
           data-section="avaliacoes"
         >
           Avaliações e mensagens
+        </button>
+
+        <button
+          id="navUsuariosButton"
+          class="admin-nav-button"
+          type="button"
+          data-section="usuarios"
+          data-admin-only
+        >
+          Usuários e permissões
         </button>
 
       </nav>
@@ -169,22 +183,22 @@
 
         <div class="admin-stat-grid">
 
-          <article class="admin-stat-card">
-            <span>Modelos cadastradas</span>
+          <article id="statCardTotalModelos" class="admin-stat-card">
+            <span id="statLabelTotalModelos">Modelos cadastradas</span>
             <strong id="statTotalModelos">0</strong>
           </article>
 
-          <article class="admin-stat-card">
-            <span>Modelos publicadas</span>
+          <article id="statCardModelosPublicadas" class="admin-stat-card">
+            <span id="statLabelModelosPublicadas">Modelos publicadas</span>
             <strong id="statModelosPublicadas">0</strong>
           </article>
 
-          <article class="admin-stat-card">
-            <span>Fotos das modelos</span>
+          <article id="statCardFotosModelos" class="admin-stat-card">
+            <span id="statLabelFotosModelos">Fotos das modelos</span>
             <strong id="statFotosModelos">0</strong>
           </article>
 
-          <article class="admin-stat-card">
+          <article id="statCardFotosCasa" class="admin-stat-card" data-admin-only>
             <span>Fotos da casa</span>
             <strong id="statFotosCasa">0</strong>
           </article>
@@ -226,7 +240,7 @@
 
             <div>
               <p class="eyebrow">Galeria</p>
-              <h2>Modelos cadastradas</h2>
+              <h2 id="modelosSectionTitle">Modelos cadastradas</h2>
             </div>
 
             <button
@@ -266,6 +280,7 @@
         id="section-casa"
         class="admin-section"
         data-admin-section="casa"
+        data-admin-only
         hidden
       >
 
@@ -322,8 +337,8 @@
           <header class="admin-card-header admin-moderation-header">
             <div>
               <p class="eyebrow">Moderação</p>
-              <h2>Avaliações e mensagens por modelo</h2>
-              <p class="muted">Somente conteúdos aprovados aparecem no site público.</p>
+              <h2 id="moderacaoTitulo">Avaliações e mensagens por modelo</h2>
+              <p id="moderacaoDescricao" class="muted">Somente conteúdos aprovados aparecem no site público.</p>
             </div>
 
             <button id="recarregarModeracaoButton" class="admin-action-button" type="button">
@@ -331,18 +346,18 @@
             </button>
           </header>
 
-          <div class="admin-moderation-summary">
-            <article>
+          <div id="moderacaoResumo" class="admin-moderation-summary">
+            <article id="avaliacoesPendentesCard">
               <span>Avaliações pendentes</span>
               <strong id="avaliacoesPendentesCount">0</strong>
             </article>
-            <article>
+            <article id="mensagensPendentesCard">
               <span>Mensagens pendentes</span>
               <strong id="mensagensPendentesCount">0</strong>
             </article>
           </div>
 
-          <div class="admin-moderation-filters">
+          <div id="moderacaoFiltros" class="admin-moderation-filters">
             <label class="admin-form-field">
               <span>Modelo</span>
               <select id="moderacaoFiltroModelo">
@@ -363,7 +378,7 @@
           </div>
         </article>
 
-        <article class="admin-content-card admin-moderation-card">
+        <article id="avaliacoesModeracaoCard" class="admin-content-card admin-moderation-card">
           <header class="admin-card-header">
             <div>
               <p class="eyebrow">Estrelas</p>
@@ -377,7 +392,7 @@
           </div>
         </article>
 
-        <article class="admin-content-card admin-moderation-card">
+        <article id="mensagensModeracaoCard" class="admin-content-card admin-moderation-card">
           <header class="admin-card-header">
             <div>
               <p class="eyebrow">Recados</p>
@@ -389,6 +404,227 @@
           <div id="mensagensAdminList" class="admin-table-wrapper">
             <p class="muted">Carregando mensagens...</p>
           </div>
+        </article>
+
+      </section>
+
+
+      <!-- ===================================================
+           USUÁRIOS E PERMISSÕES
+           =================================================== -->
+
+      <section
+        id="section-usuarios"
+        class="admin-section"
+        data-admin-section="usuarios"
+        data-admin-only
+        hidden
+      >
+
+        <article class="admin-content-card">
+
+          <header class="admin-card-header">
+            <div>
+              <p class="eyebrow">Acessos</p>
+              <h2 id="usuarioModeloFormTitle">Criar usuário para uma modelo</h2>
+              <p class="muted">
+                O usuário usará a mesma tela de login do painel, mas verá
+                somente a modelo vinculada e as ações autorizadas abaixo.
+              </p>
+            </div>
+          </header>
+
+          <form id="usuarioModeloForm" class="admin-form">
+
+            <input id="usuarioPerfilId" type="hidden">
+
+            <div class="admin-form-grid">
+
+              <div class="admin-form-field">
+                <label for="usuarioNome">Nome do usuário *</label>
+                <input
+                  id="usuarioNome"
+                  name="nome"
+                  type="text"
+                  maxlength="120"
+                  autocomplete="off"
+                  required
+                >
+              </div>
+
+              <div class="admin-form-field">
+                <label for="usuarioEmail">E-mail *</label>
+                <input
+                  id="usuarioEmail"
+                  name="email"
+                  type="email"
+                  maxlength="200"
+                  autocomplete="off"
+                  required
+                >
+                <small>
+                  Ao criar, o Supabase enviará um convite para este e-mail.
+                </small>
+              </div>
+
+              <div class="admin-form-field">
+                <label for="usuarioModeloId">Modelo vinculada *</label>
+                <select
+                  id="usuarioModeloId"
+                  name="modelo_id"
+                  required
+                >
+                  <option value="">Selecione uma modelo</option>
+                </select>
+              </div>
+
+              <div class="admin-form-field admin-form-checkbox-field">
+                <label class="admin-checkbox-label">
+                  <input
+                    id="usuarioAtivo"
+                    name="ativo"
+                    type="checkbox"
+                    checked
+                  >
+                  <span>Acesso ativo</span>
+                </label>
+              </div>
+
+            </div>
+
+            <fieldset class="admin-permissions-fieldset">
+              <legend>Permissões da modelo</legend>
+
+              <div class="admin-permissions-grid">
+
+                <label class="admin-permission-option">
+                  <input id="permEditarPerfil" type="checkbox">
+                  <span>
+                    <strong>Editar perfil</strong>
+                    <small>Nome, idade, cidade, signo, descrição e URL.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permGerenciarFotos" type="checkbox">
+                  <span>
+                    <strong>Gerenciar fotos</strong>
+                    <small>Enviar imagens, organizar e definir a capa.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permExcluirFotos" type="checkbox">
+                  <span>
+                    <strong>Excluir fotos</strong>
+                    <small>Remover fotos da própria galeria.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permPublicarFotos" type="checkbox">
+                  <span>
+                    <strong>Publicar fotos</strong>
+                    <small>Publicar ou ocultar fotos da própria galeria.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permPublicarPerfil" type="checkbox">
+                  <span>
+                    <strong>Publicar perfil</strong>
+                    <small>Alterar o status do próprio perfil.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permEditarServicosPrecos" type="checkbox">
+                  <span>
+                    <strong>Editar serviços e preços</strong>
+                    <small>Permissão preparada para a próxima etapa.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permVisualizarAvaliacoes" type="checkbox">
+                  <span>
+                    <strong>Visualizar avaliações</strong>
+                    <small>Ver avaliações relacionadas à própria modelo.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permVisualizarMensagens" type="checkbox">
+                  <span>
+                    <strong>Visualizar mensagens</strong>
+                    <small>Ver mensagens relacionadas à própria modelo.</small>
+                  </span>
+                </label>
+
+                <label class="admin-permission-option">
+                  <input id="permResponderMensagens" type="checkbox">
+                  <span>
+                    <strong>Responder mensagens</strong>
+                    <small>Permissão preparada para a etapa de respostas.</small>
+                  </span>
+                </label>
+
+              </div>
+            </fieldset>
+
+            <div
+              id="usuarioModeloFeedback"
+              class="admin-feedback"
+              aria-live="polite"
+            ></div>
+
+            <footer class="admin-form-actions">
+              <button
+                id="cancelarEdicaoUsuarioButton"
+                class="admin-secondary-button"
+                type="button"
+                hidden
+              >
+                Cancelar edição
+              </button>
+
+              <button
+                id="salvarUsuarioModeloButton"
+                class="btn btn-primary"
+                type="submit"
+              >
+                Criar usuário e enviar convite
+              </button>
+            </footer>
+
+          </form>
+
+        </article>
+
+        <article class="admin-content-card">
+
+          <header class="admin-card-header">
+            <div>
+              <p class="eyebrow">Usuários cadastrados</p>
+              <h2>Acessos das modelos</h2>
+            </div>
+
+            <button
+              id="recarregarUsuariosButton"
+              class="admin-action-button"
+              type="button"
+            >
+              Atualizar
+            </button>
+          </header>
+
+          <div
+            id="usuariosModeloList"
+            class="admin-table-wrapper"
+          >
+            <p class="muted">Carregando usuários...</p>
+          </div>
+
         </article>
 
       </section>
@@ -702,7 +938,7 @@
 
     <!-- UPLOAD -->
 
-    <section class="admin-upload-section">
+    <section id="modeloFotosUploadSection" class="admin-upload-section">
 
       <div class="admin-upload-header">
 
@@ -822,7 +1058,7 @@
           <h3>Galeria atual</h3>
         </div>
 
-        <div class="admin-card-header-actions">
+        <div id="modeloFotosLoteActions" class="admin-card-header-actions">
           <button
             id="publicarTodasFotosModeloButton"
             class="admin-action-button"

@@ -1434,3 +1434,81 @@ body.admin-modal-open {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================
+   USUÁRIOS E PERMISSÕES
+   ========================================================== */
+
+.admin-permissions-fieldset {
+  margin: 6px 0 0;
+  padding: 18px;
+  border: 1px solid rgba(200, 154, 61, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.admin-permissions-fieldset legend {
+  padding: 0 8px;
+  color: var(--gold-soft);
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+}
+
+.admin-permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.admin-permission-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+}
+
+.admin-permission-option:hover {
+  border-color: rgba(200, 154, 61, 0.26);
+}
+
+.admin-permission-option input {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.admin-permission-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-permission-option strong {
+  color: var(--text);
+}
+
+.admin-permission-option small,
+.admin-table-secondary {
+  display: block;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.admin-form input:disabled,
+.admin-form select:disabled,
+.admin-form textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+@media (max-width: 760px) {
+  .admin-permissions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-permissions-fieldset {
+    padding: 14px;
+  }
+}
