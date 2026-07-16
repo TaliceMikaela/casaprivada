@@ -15,6 +15,8 @@ const modelGalleryGrid = document.getElementById('modelGalleryGrid');
 const modelGalleryTitle = document.getElementById('modelGalleryTitle');
 const modelGalleryMeta = document.getElementById('modelGalleryMeta');
 const modelGalleryDescription = document.getElementById('modelGalleryDescription');
+const modelServicesSection = document.getElementById('modelServicesSection');
+const modelServicesList = document.getElementById('modelServicesList');
 const backToModelsBtn = document.getElementById('backToModelsBtn');
 const eventPopup = document.getElementById('eventPopup');
 const closeEventPopupBtn = document.getElementById('closeEventPopupBtn');
@@ -247,6 +249,25 @@ async function montarModelosSupabase(modelos) {
     throw error;
   }
 
+  const { data: servicos, error: servicosError } = await supabase
+    .from('modelo_servicos')
+    .select(`
+      id,
+      modelo_id,
+      duracao_minutos,
+      preco,
+      observacao,
+      ordem
+    `)
+    .in('modelo_id', ids)
+    .eq('ativo', true)
+    .order('ordem', { ascending: true })
+    .order('duracao_minutos', { ascending: true });
+
+  if (servicosError) {
+    throw servicosError;
+  }
+
   const fotosPorModelo = new Map();
 
   (fotos || []).forEach((foto) => {
@@ -271,6 +292,20 @@ async function montarModelosSupabase(modelos) {
     fotosPorModelo.set(foto.modelo_id, lista);
   });
 
+  const servicosPorModelo = new Map();
+
+  (servicos || []).forEach((servico) => {
+    const lista = servicosPorModelo.get(servico.modelo_id) || [];
+    lista.push({
+      id: servico.id,
+      durationMinutes: Number(servico.duracao_minutos) || 0,
+      price: Number(servico.preco) || 0,
+      note: servico.observacao || '',
+      order: servico.ordem ?? 0
+    });
+    servicosPorModelo.set(servico.modelo_id, lista);
+  });
+
   return modelos
     .map((modelo) => {
       const gallery = fotosPorModelo.get(modelo.id) || [];
@@ -287,6 +322,7 @@ async function montarModelosSupabase(modelos) {
         description: modelo.descricao || `Galeria individual de ${modelo.nome}.`,
         cover: capa?.src || '',
         gallery,
+        services: servicosPorModelo.get(modelo.id) || [],
         ordem: modelo.ordem ?? 0,
         destaque: Boolean(modelo.destaque),
         origem: 'supabase'
@@ -681,6 +717,65 @@ function renderModelsGallery(models) {
   });
 }
 
+
+
+function formatModelServiceDuration(minutes) {
+  const total = Number(minutes) || 0;
+
+  if (total < 60) {
+    return `${total} ${total === 1 ? 'minuto' : 'minutos'}`;
+  }
+
+  const hours = Math.floor(total / 60);
+  const remainder = total % 60;
+  const hoursText = `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+
+  return remainder > 0
+    ? `${hoursText} e ${remainder} ${remainder === 1 ? 'minuto' : 'minutos'}`
+    : hoursText;
+}
+
+function formatModelServicePrice(price) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(Number(price) || 0);
+}
+
+function renderModelServices(model) {
+  if (!modelServicesSection || !modelServicesList) return;
+
+  const services = Array.isArray(model?.services)
+    ? model.services
+    : [];
+
+  if (!services.length) {
+    modelServicesList.innerHTML = '';
+    modelServicesSection.classList.add('hidden');
+    return;
+  }
+
+  modelServicesList.innerHTML = services
+    .map((service) => `
+      <article class="model-service-card">
+        <div class="model-service-duration">
+          <span>Tempo</span>
+          <strong>${escapeHtml(formatModelServiceDuration(service.durationMinutes))}</strong>
+        </div>
+        <div class="model-service-price">
+          <span>Valor</span>
+          <strong>${escapeHtml(formatModelServicePrice(service.price))}</strong>
+        </div>
+        ${service.note
+          ? `<p>${escapeHtml(service.note)}</p>`
+          : ''}
+      </article>
+    `)
+    .join('');
+
+  modelServicesSection.classList.remove('hidden');
+}
+
 function bindModelsEvents() {
   backToModelsBtn?.addEventListener('click', closeModelGallery);
 }
@@ -692,6 +787,7 @@ function openModelGallery(index) {
   modelGalleryTitle.textContent = getModelDisplayName(model);
   modelGalleryMeta.innerHTML = buildModelMeta(model);
   modelGalleryDescription.textContent = model.description || 'Galeria individual da modelo.';
+  renderModelServices(model);
   modelGalleryGrid.innerHTML = '';
 
   const photos = normalizeModelPhotos(model);
@@ -737,6 +833,8 @@ function closeModelGallery() {
   modelInteractionRequestId += 1;
   currentInteractionModel = null;
   modelInteractions?.classList.add('hidden');
+  modelServicesSection?.classList.add('hidden');
+  if (modelServicesList) modelServicesList.innerHTML = '';
   modelInteractionUnavailable?.classList.add('hidden');
   modelGalleryPanel?.classList.add('hidden');
   document.getElementById('modelos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

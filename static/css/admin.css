@@ -1518,3 +1518,41 @@ body.admin-modal-open {
     padding: 14px;
   }
 }
+
+
+/* ==========================================================
+   TEMPOS E PREÇOS DAS MODELOS
+   ========================================================== */
+
+.admin-servicos-editor,
+.admin-servicos-list-section {
+  padding: 20px;
+  border: 1px solid rgba(200, 154, 61, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.admin-servicos-list-section {
+  margin-top: 22px;
+}
+
+.admin-form-field-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-servicos-table {
+  min-width: 900px;
+}
+
+.admin-servico-preco {
+  color: var(--gold-strong);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .admin-servicos-editor,
+  .admin-servicos-list-section {
+    padding: 15px;
+  }
+}

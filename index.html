@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="stylesheet" href="static/css/style.css?v=20260716-servicos" />
 </head>
 <body>
   
@@ -139,6 +139,24 @@ Nenhuma modelo publicada no momento.
             <button id="backToModelsBtn" class="btn btn-secondary btn-small" type="button">Voltar para a grade</button>
           </div>
         </div>
+
+
+        <section
+          id="modelServicesSection"
+          class="model-services-section hidden"
+          aria-labelledby="modelServicesTitle"
+        >
+          <div class="model-services-header">
+            <div>
+              <p class="eyebrow">Atendimento</p>
+              <h4 id="modelServicesTitle">Valores e duração</h4>
+              <p class="muted">Escolha a opção de tempo que combina com o seu momento.</p>
+            </div>
+          </div>
+
+          <div id="modelServicesList" class="model-services-grid"></div>
+        </section>
+
         <div id="modelGalleryGrid" class="public-gallery-grid model-photos-grid"></div>
 
         <div id="modelInteractionUnavailable" class="model-interaction-unavailable hidden" role="status"></div>
@@ -316,7 +334,7 @@ Nenhuma modelo publicada no momento.
 <script src="static/js/supabase-config.js?v=20260713-1048"></script>
 
 <script src="static/js/house-gallery-data.js?v=20260713-1048"></script>
-<script src="static/js/main.js?v=20260713-1048"></script>
+<script src="static/js/main.js?v=20260716-servicos"></script>
 </body>
 </html>
 

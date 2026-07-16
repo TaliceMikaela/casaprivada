@@ -241,6 +241,62 @@
     const salvarModeloButton =
         document.getElementById('salvarModeloButton');
 
+
+
+    const modeloServicosModal =
+        document.getElementById('modeloServicosModal');
+
+    const modeloServicosModalOverlay =
+        document.getElementById('modeloServicosModalOverlay');
+
+    const fecharModeloServicosModalButton =
+        document.getElementById('fecharModeloServicosModalButton');
+
+    const modeloServicosModalTitle =
+        document.getElementById('modeloServicosModalTitle');
+
+    const modeloServicosModalSubtitle =
+        document.getElementById('modeloServicosModalSubtitle');
+
+    const modeloServicosModeloId =
+        document.getElementById('modeloServicosModeloId');
+
+    const modeloServicoForm =
+        document.getElementById('modeloServicoForm');
+
+    const modeloServicoFormTitle =
+        document.getElementById('modeloServicoFormTitle');
+
+    const modeloServicoId =
+        document.getElementById('modeloServicoId');
+
+    const modeloServicoDuracao =
+        document.getElementById('modeloServicoDuracao');
+
+    const modeloServicoPreco =
+        document.getElementById('modeloServicoPreco');
+
+    const modeloServicoOrdem =
+        document.getElementById('modeloServicoOrdem');
+
+    const modeloServicoAtivo =
+        document.getElementById('modeloServicoAtivo');
+
+    const modeloServicoObservacao =
+        document.getElementById('modeloServicoObservacao');
+
+    const modeloServicoFeedback =
+        document.getElementById('modeloServicoFeedback');
+
+    const salvarModeloServicoButton =
+        document.getElementById('salvarModeloServicoButton');
+
+    const cancelarEdicaoServicoButton =
+        document.getElementById('cancelarEdicaoServicoButton');
+
+    const modeloServicosList =
+        document.getElementById('modeloServicosList');
+
     const usuarioModeloForm =
         document.getElementById('usuarioModeloForm');
 
@@ -305,6 +361,7 @@
         document.getElementById('recarregarUsuariosButton');
 
     let modelosCache = [];
+    let modeloServicosCache = [];
     let avaliacoesModeracaoCache = [];
     let mensagensModeracaoCache = [];
     let usuariosModeloCache = [];
@@ -414,6 +471,10 @@ function podePublicarFotos() {
 
 function podeExcluirFotos() {
     return usuarioTemPermissao('pode_excluir_fotos');
+}
+
+function podeEditarServicosPrecos() {
+    return usuarioTemPermissao('pode_editar_servicos_precos');
 }
     async function obterSessao() {
         const { data, error } =
@@ -726,6 +787,18 @@ async function carregarModelos() {
 
                 <td>
                   <div class="admin-action-group">
+                    ${podeEditarServicosPrecos()
+                        ? `
+                          <button
+                            class="admin-action-button"
+                            type="button"
+                            data-servicos-modelo="${modelo.id}"
+                          >
+                            Tempos e preços
+                          </button>
+                        `
+                        : ''}
+
                     <button
                       class="admin-action-button"
                       type="button"
@@ -2101,6 +2174,426 @@ async function salvarModelo(event) {
         definirFormularioModeloCarregando(false);
     }
 }
+
+
+function formatarDuracaoServico(minutos) {
+    const total = Number(minutos) || 0;
+
+    if (total < 60) {
+        return `${total} ${total === 1 ? 'minuto' : 'minutos'}`;
+    }
+
+    const horas = Math.floor(total / 60);
+    const restante = total % 60;
+    const textoHoras = `${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+
+    return restante > 0
+        ? `${textoHoras} e ${restante} ${restante === 1 ? 'minuto' : 'minutos'}`
+        : textoHoras;
+}
+
+function formatarPrecoServico(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(Number(valor) || 0);
+}
+
+function mostrarFeedbackServico(mensagem, tipo = '') {
+    modeloServicoFeedback.textContent = mensagem;
+    modeloServicoFeedback.className = 'admin-feedback';
+
+    if (tipo) {
+        modeloServicoFeedback.classList.add(tipo);
+    }
+}
+
+function limparFormularioServico() {
+    modeloServicoForm.reset();
+    modeloServicoId.value = '';
+    modeloServicoOrdem.value = 0;
+    modeloServicoAtivo.checked = true;
+    modeloServicoFormTitle.textContent = 'Adicionar tempo e preço';
+    salvarModeloServicoButton.textContent = 'Adicionar opção';
+    cancelarEdicaoServicoButton.hidden = true;
+    mostrarFeedbackServico('');
+}
+
+function definirFormularioServicoCarregando(carregando) {
+    modeloServicoForm
+        .querySelectorAll('input, textarea, button')
+        .forEach(function (campo) {
+            campo.disabled = carregando;
+        });
+
+    salvarModeloServicoButton.textContent = carregando
+        ? 'Salvando...'
+        : (modeloServicoId.value ? 'Salvar alteração' : 'Adicionar opção');
+}
+
+function traduzirErroServico(error) {
+    const mensagem = String(error?.message || '').toLowerCase();
+
+    if (
+        mensagem.includes('modelo_servicos_modelo_duracao_uk') ||
+        mensagem.includes('duplicate key')
+    ) {
+        return 'Já existe uma opção com esse tempo para esta modelo.';
+    }
+
+    if (mensagem.includes('modelo_servicos_duracao_positiva_ck')) {
+        return 'O tempo deve ser maior que zero.';
+    }
+
+    if (mensagem.includes('modelo_servicos_preco_positivo_ck')) {
+        return 'O preço não pode ser negativo.';
+    }
+
+    if (mensagem.includes('row-level security')) {
+        return 'Seu usuário não possui permissão para alterar tempos e preços.';
+    }
+
+    return 'Não foi possível salvar o tempo e o preço.';
+}
+
+async function carregarServicosModelo(modeloId) {
+    if (!modeloPertenceAoUsuario(modeloId)) {
+        throw new Error('Acesso negado aos preços desta modelo.');
+    }
+
+    modeloServicosList.innerHTML = `
+      <p class="muted">Carregando tempos e preços...</p>
+    `;
+
+    const { data, error } = await supabase
+        .from('modelo_servicos')
+        .select(`
+          id,
+          modelo_id,
+          duracao_minutos,
+          preco,
+          observacao,
+          ordem,
+          ativo,
+          criado_em,
+          atualizado_em
+        `)
+        .eq('modelo_id', modeloId)
+        .order('ordem', { ascending: true })
+        .order('duracao_minutos', { ascending: true });
+
+    if (error) {
+        throw error;
+    }
+
+    modeloServicosCache = data || [];
+
+    if (modeloServicosCache.length === 0) {
+        modeloServicosList.innerHTML = `
+          <div class="admin-empty-state">
+            <strong>Nenhum tempo ou preço cadastrado.</strong>
+            <p>Use o formulário acima para adicionar a primeira opção.</p>
+          </div>
+        `;
+        return;
+    }
+
+    modeloServicosList.innerHTML = `
+      <table class="admin-table admin-servicos-table">
+        <thead>
+          <tr>
+            <th>Tempo</th>
+            <th>Preço</th>
+            <th>Observação</th>
+            <th>Status</th>
+            <th>Ordem</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${modeloServicosCache.map(function (servico) {
+              return `
+                <tr>
+                  <td><strong>${escaparHtml(formatarDuracaoServico(servico.duracao_minutos))}</strong></td>
+                  <td class="admin-servico-preco">${escaparHtml(formatarPrecoServico(servico.preco))}</td>
+                  <td>${escaparHtml(servico.observacao || '—')}</td>
+                  <td>
+                    <span class="admin-status ${servico.ativo ? 'admin-status-publicada' : 'admin-status-oculta'}">
+                      ${servico.ativo ? 'ativo' : 'oculto'}
+                    </span>
+                  </td>
+                  <td>${escaparHtml(servico.ordem)}</td>
+                  <td>
+                    <div class="admin-action-group">
+                      <button
+                        class="admin-action-button"
+                        type="button"
+                        data-editar-servico-modelo="${servico.id}"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        class="admin-action-button"
+                        type="button"
+                        data-alternar-servico-modelo="${servico.id}"
+                      >
+                        ${servico.ativo ? 'Ocultar' : 'Ativar'}
+                      </button>
+                      <button
+                        class="admin-action-button admin-action-button-danger"
+                        type="button"
+                        data-excluir-servico-modelo="${servico.id}"
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+}
+
+async function abrirModeloServicosModal(modelo) {
+    if (!modeloPertenceAoUsuario(modelo.id)) {
+        mostrarFeedbackListaModelos(
+            'Você não possui acesso a esta modelo.',
+            'error'
+        );
+        return;
+    }
+
+    if (!podeEditarServicosPrecos()) {
+        mostrarFeedbackListaModelos(
+            'Seu usuário não possui permissão para alterar tempos e preços.',
+            'error'
+        );
+        return;
+    }
+
+    limparFormularioServico();
+    modeloServicosModeloId.value = modelo.id;
+    modeloServicosModalTitle.textContent = 'Tempos e preços';
+    modeloServicosModalSubtitle.textContent =
+        `${modelo.nome} · opções exibidas no perfil público`;
+
+    modeloServicosModal.hidden = false;
+    document.body.classList.add('admin-modal-open');
+
+    try {
+        await carregarServicosModelo(modelo.id);
+        modeloServicoDuracao.focus();
+    } catch (error) {
+        console.error('Erro ao carregar tempos e preços:', error);
+        modeloServicosList.innerHTML = `
+          <div class="admin-empty-state">
+            <strong>Não foi possível carregar os valores.</strong>
+            <p>Verifique a conexão e as permissões deste usuário.</p>
+          </div>
+        `;
+    }
+}
+
+function fecharModeloServicosModal() {
+    modeloServicosModal.hidden = true;
+    document.body.classList.remove('admin-modal-open');
+    modeloServicosModeloId.value = '';
+    modeloServicosCache = [];
+    limparFormularioServico();
+    modeloServicosList.innerHTML = `
+      <p class="muted">Selecione uma modelo para carregar os valores.</p>
+    `;
+}
+
+function iniciarEdicaoServico(servicoId) {
+    const servico = modeloServicosCache.find(function (item) {
+        return item.id === servicoId;
+    });
+
+    if (!servico) {
+        return;
+    }
+
+    modeloServicoId.value = servico.id;
+    modeloServicoDuracao.value = servico.duracao_minutos;
+    modeloServicoPreco.value = Number(servico.preco).toFixed(2);
+    modeloServicoOrdem.value = servico.ordem ?? 0;
+    modeloServicoAtivo.checked = Boolean(servico.ativo);
+    modeloServicoObservacao.value = servico.observacao || '';
+    modeloServicoFormTitle.textContent = 'Editar tempo e preço';
+    salvarModeloServicoButton.textContent = 'Salvar alteração';
+    cancelarEdicaoServicoButton.hidden = false;
+    mostrarFeedbackServico('');
+    modeloServicoDuracao.focus();
+}
+
+async function salvarServicoModelo(event) {
+    event.preventDefault();
+    mostrarFeedbackServico('');
+
+    if (!podeEditarServicosPrecos()) {
+        mostrarFeedbackServico(
+            'Seu usuário não possui permissão para esta operação.',
+            'error'
+        );
+        return;
+    }
+
+    if (!modeloServicoForm.reportValidity()) {
+        return;
+    }
+
+    const modeloId = modeloServicosModeloId.value.trim();
+    const servicoId = modeloServicoId.value.trim();
+
+    if (!modeloId || !modeloPertenceAoUsuario(modeloId)) {
+        mostrarFeedbackServico('Modelo inválida ou sem acesso.', 'error');
+        return;
+    }
+
+    const payload = {
+        modelo_id: modeloId,
+        duracao_minutos: Number(modeloServicoDuracao.value),
+        preco: Number(String(modeloServicoPreco.value).replace(',', '.')),
+        observacao: modeloServicoObservacao.value.trim() || null,
+        ordem: Number(modeloServicoOrdem.value) || 0,
+        ativo: modeloServicoAtivo.checked
+    };
+
+    definirFormularioServicoCarregando(true);
+
+    try {
+        let resultado;
+
+        if (servicoId) {
+            resultado = await supabase
+                .from('modelo_servicos')
+                .update(payload)
+                .eq('id', servicoId)
+                .eq('modelo_id', modeloId)
+                .select('id')
+                .single();
+        } else {
+            resultado = await supabase
+                .from('modelo_servicos')
+                .insert(payload)
+                .select('id')
+                .single();
+        }
+
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+        limparFormularioServico();
+        mostrarFeedbackServico(
+            servicoId
+                ? 'Tempo e preço atualizados com sucesso.'
+                : 'Tempo e preço adicionados com sucesso.',
+            'success'
+        );
+        await carregarServicosModelo(modeloId);
+    } catch (error) {
+        console.error('Erro ao salvar tempo e preço:', error);
+        mostrarFeedbackServico(traduzirErroServico(error), 'error');
+    } finally {
+        definirFormularioServicoCarregando(false);
+    }
+}
+
+async function alternarServicoModelo(servicoId) {
+    const servico = modeloServicosCache.find(function (item) {
+        return item.id === servicoId;
+    });
+
+    if (!servico) {
+        return;
+    }
+
+    const modeloId = modeloServicosModeloId.value.trim();
+    const { error } = await supabase
+        .from('modelo_servicos')
+        .update({ ativo: !servico.ativo })
+        .eq('id', servico.id)
+        .eq('modelo_id', modeloId);
+
+    if (error) {
+        throw error;
+    }
+
+    mostrarFeedbackServico(
+        servico.ativo
+            ? 'Opção ocultada do site público.'
+            : 'Opção ativada no site público.',
+        'success'
+    );
+    await carregarServicosModelo(modeloId);
+}
+
+async function excluirServicoModelo(servicoId) {
+    const servico = modeloServicosCache.find(function (item) {
+        return item.id === servicoId;
+    });
+
+    if (!servico) {
+        return;
+    }
+
+    const confirmado = window.confirm(
+        `Excluir ${formatarDuracaoServico(servico.duracao_minutos)} por ${formatarPrecoServico(servico.preco)}?`
+    );
+
+    if (!confirmado) {
+        return;
+    }
+
+    const modeloId = modeloServicosModeloId.value.trim();
+    const { error } = await supabase
+        .from('modelo_servicos')
+        .delete()
+        .eq('id', servico.id)
+        .eq('modelo_id', modeloId);
+
+    if (error) {
+        throw error;
+    }
+
+    limparFormularioServico();
+    mostrarFeedbackServico('Opção excluída com sucesso.', 'success');
+    await carregarServicosModelo(modeloId);
+}
+
+async function executarAcaoServicoModelo(event) {
+    const editarButton = event.target.closest('[data-editar-servico-modelo]');
+    const alternarButton = event.target.closest('[data-alternar-servico-modelo]');
+    const excluirButton = event.target.closest('[data-excluir-servico-modelo]');
+
+    try {
+        if (editarButton) {
+            iniciarEdicaoServico(editarButton.dataset.editarServicoModelo);
+            return;
+        }
+
+        if (alternarButton) {
+            await alternarServicoModelo(
+                alternarButton.dataset.alternarServicoModelo
+            );
+            return;
+        }
+
+        if (excluirButton) {
+            await excluirServicoModelo(
+                excluirButton.dataset.excluirServicoModelo
+            );
+        }
+    } catch (error) {
+        console.error('Erro ao administrar tempo e preço:', error);
+        mostrarFeedbackServico(traduzirErroServico(error), 'error');
+    }
+}
+
     function configurarFormularioModelos() {
         novaModeloButton.addEventListener(
             'click',
@@ -2132,6 +2625,31 @@ async function salvarModelo(event) {
         modeloFotosModalOverlay.addEventListener(
             'click',
             fecharModeloFotosModal
+        );
+
+        fecharModeloServicosModalButton.addEventListener(
+            'click',
+            fecharModeloServicosModal
+        );
+
+        modeloServicosModalOverlay.addEventListener(
+            'click',
+            fecharModeloServicosModal
+        );
+
+        modeloServicoForm.addEventListener(
+            'submit',
+            salvarServicoModelo
+        );
+
+        cancelarEdicaoServicoButton.addEventListener(
+            'click',
+            limparFormularioServico
+        );
+
+        modeloServicosList.addEventListener(
+            'click',
+            executarAcaoServicoModelo
         );
 
         modeloNome.addEventListener('input', function () {
@@ -2198,6 +2716,27 @@ async function salvarModelo(event) {
                     return;
                 }
 
+                const servicosButton = event.target.closest(
+                    '[data-servicos-modelo]'
+                );
+
+                if (servicosButton) {
+                    const modelo = modelosCache.find(
+                        function (item) {
+                            return (
+                                item.id ===
+                                servicosButton.dataset.servicosModelo
+                            );
+                        }
+                    );
+
+                    if (modelo) {
+                        await abrirModeloServicosModal(modelo);
+                    }
+
+                    return;
+                }
+
                 const fotosButton = event.target.closest(
                     '[data-fotos-modelo]'
                 );
@@ -2223,6 +2762,11 @@ async function salvarModelo(event) {
             'keydown',
             function (event) {
                 if (event.key !== 'Escape') {
+                    return;
+                }
+
+                if (!modeloServicosModal.hidden) {
+                    fecharModeloServicosModal();
                     return;
                 }
 

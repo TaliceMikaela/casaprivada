@@ -20,8 +20,8 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="static/css/style.css">
-  <link rel="stylesheet" href="static/css/admin.css">
+  <link rel="stylesheet" href="static/css/style.css?v=20260716-servicos">
+  <link rel="stylesheet" href="static/css/admin.css?v=20260716-servicos">
 </head>
 
 <body class="admin-body">
@@ -541,7 +541,7 @@
                   <input id="permEditarServicosPrecos" type="checkbox">
                   <span>
                     <strong>Editar serviços e preços</strong>
-                    <small>Permissão preparada para a próxima etapa.</small>
+                    <small>Cadastrar, alterar, ativar e excluir tempos e valores.</small>
                   </span>
                 </label>
 
@@ -1092,10 +1092,172 @@
   </section>
 
 </div>
+
+
+<!-- =====================================================
+     MODAL: TEMPOS E PREÇOS DA MODELO
+     ===================================================== -->
+
+<div
+  id="modeloServicosModal"
+  class="admin-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modeloServicosModalTitle"
+  hidden
+>
+
+  <div
+    id="modeloServicosModalOverlay"
+    class="admin-modal-overlay"
+  ></div>
+
+  <section class="admin-modal-card admin-modal-card-large">
+
+    <header class="admin-modal-header">
+      <div>
+        <p class="eyebrow">Atendimento</p>
+        <h2 id="modeloServicosModalTitle">Tempos e preços</h2>
+        <p id="modeloServicosModalSubtitle" class="muted"></p>
+      </div>
+
+      <button
+        id="fecharModeloServicosModalButton"
+        class="admin-modal-close"
+        type="button"
+        aria-label="Fechar tempos e preços"
+      >
+        ×
+      </button>
+    </header>
+
+    <input id="modeloServicosModeloId" type="hidden">
+
+    <section class="admin-servicos-editor">
+      <header class="admin-card-header">
+        <div>
+          <p class="eyebrow">Nova opção</p>
+          <h3 id="modeloServicoFormTitle">Adicionar tempo e preço</h3>
+        </div>
+      </header>
+
+      <form id="modeloServicoForm" class="admin-form">
+        <input id="modeloServicoId" type="hidden">
+
+        <div class="admin-form-grid">
+          <div class="admin-form-field">
+            <label for="modeloServicoDuracao">Tempo em minutos *</label>
+            <input
+              id="modeloServicoDuracao"
+              name="duracao_minutos"
+              type="number"
+              min="1"
+              max="1440"
+              step="5"
+              placeholder="Ex.: 60"
+              required
+            >
+            <small>Exemplos: 30, 60 ou 120 minutos.</small>
+          </div>
+
+          <div class="admin-form-field">
+            <label for="modeloServicoPreco">Preço (R$) *</label>
+            <input
+              id="modeloServicoPreco"
+              name="preco"
+              type="number"
+              min="0"
+              max="99999999.99"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="Ex.: 300,00"
+              required
+            >
+          </div>
+
+          <div class="admin-form-field">
+            <label for="modeloServicoOrdem">Ordem de exibição</label>
+            <input
+              id="modeloServicoOrdem"
+              name="ordem"
+              type="number"
+              min="0"
+              step="1"
+              value="0"
+            >
+          </div>
+
+          <div class="admin-form-field admin-form-checkbox-field">
+            <label class="admin-checkbox-label">
+              <input
+                id="modeloServicoAtivo"
+                name="ativo"
+                type="checkbox"
+                checked
+              >
+              <span>Exibir esta opção no site</span>
+            </label>
+          </div>
+
+          <div class="admin-form-field admin-form-field-wide">
+            <label for="modeloServicoObservacao">Observação</label>
+            <textarea
+              id="modeloServicoObservacao"
+              name="observacao"
+              maxlength="300"
+              rows="3"
+              placeholder="Informação opcional sobre esta duração"
+            ></textarea>
+          </div>
+        </div>
+
+        <div
+          id="modeloServicoFeedback"
+          class="admin-feedback"
+          aria-live="polite"
+        ></div>
+
+        <footer class="admin-form-actions">
+          <button
+            id="cancelarEdicaoServicoButton"
+            class="admin-secondary-button"
+            type="button"
+            hidden
+          >
+            Cancelar edição
+          </button>
+
+          <button
+            id="salvarModeloServicoButton"
+            class="btn btn-primary"
+            type="submit"
+          >
+            Adicionar opção
+          </button>
+        </footer>
+      </form>
+    </section>
+
+    <section class="admin-servicos-list-section">
+      <header class="admin-card-header">
+        <div>
+          <p class="eyebrow">Opções cadastradas</p>
+          <h3>Tempos e valores atuais</h3>
+        </div>
+      </header>
+
+      <div id="modeloServicosList" class="admin-table-wrapper">
+        <p class="muted">Selecione uma modelo para carregar os valores.</p>
+      </div>
+    </section>
+
+  </section>
+</div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script src="static/js/supabase-config.js"></script>
-  <script src="static/js/painel-admin.js"></script>
+  <script src="static/js/painel-admin.js?v=20260716-servicos"></script>
 
 </body>
 </html>
