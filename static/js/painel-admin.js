@@ -15,6 +15,18 @@
     const userRole =
         document.getElementById('adminUserRole');
 
+    const adminSidebarEyebrow =
+        document.getElementById('adminSidebarEyebrow');
+
+    const adminTopbarEyebrow =
+        document.getElementById('adminTopbarEyebrow');
+
+    const dashboardSummaryTitle =
+        document.getElementById('dashboardSummaryTitle');
+
+    const dashboardSummaryDescription =
+        document.getElementById('dashboardSummaryDescription');
+
     const navModelosButton =
         document.getElementById('navModelosButton');
 
@@ -2234,9 +2246,39 @@ function aplicarInterfacePorPerfil() {
         document.querySelectorAll('[data-admin-only]');
 
     if (usuarioAtualEhAdministrador()) {
+        document.title =
+            'Painel Administrativo | Casa dos Prazeres';
+
+        if (adminSidebarEyebrow) {
+            adminSidebarEyebrow.textContent = 'Administração';
+        }
+
+        if (adminTopbarEyebrow) {
+            adminTopbarEyebrow.textContent = 'Painel administrativo';
+        }
+
+        if (dashboardSummaryTitle) {
+            dashboardSummaryTitle.textContent =
+                'Gerenciamento do site';
+        }
+
+        if (dashboardSummaryDescription) {
+            dashboardSummaryDescription.textContent =
+                'Use o menu lateral para cadastrar modelos, organizar fotografias e controlar o conteúdo publicado no site.';
+        }
+
+        elementosSomenteAdministrador.forEach(function (elemento) {
+            elemento.hidden = false;
+        });
+
+        statLabelTotalModelos.textContent = 'Modelos cadastradas';
+        statLabelModelosPublicadas.textContent = 'Modelos publicadas';
+        statLabelFotosModelos.textContent = 'Fotos das modelos';
+
         novaModeloButton.hidden = false;
         navModelosButton.textContent = 'Modelos';
         modelosSectionTitle.textContent = 'Modelos cadastradas';
+        titulosSecoes.modelos = 'Modelos';
         return;
     }
 
@@ -2244,9 +2286,31 @@ function aplicarInterfacePorPerfil() {
         elemento.hidden = true;
     });
 
+    document.title =
+        'Painel da Modelo | Casa dos Prazeres';
+
+    if (adminSidebarEyebrow) {
+        adminSidebarEyebrow.textContent = 'Área da modelo';
+    }
+
+    if (adminTopbarEyebrow) {
+        adminTopbarEyebrow.textContent = 'Painel da modelo';
+    }
+
+    if (dashboardSummaryTitle) {
+        dashboardSummaryTitle.textContent =
+            'Gerenciamento do meu perfil';
+    }
+
+    if (dashboardSummaryDescription) {
+        dashboardSummaryDescription.textContent =
+            'Use o menu lateral para atualizar seu perfil e organizar suas fotos, conforme as permissões concedidas pelo administrador.';
+    }
+
     novaModeloButton.hidden = true;
     navModelosButton.textContent = 'Meu perfil e fotos';
     modelosSectionTitle.textContent = 'Meu perfil';
+    titulosSecoes.modelos = 'Meu perfil e fotos';
 
     const podeVerAvaliacoes =
         perfilAdministrativoAtual.pode_visualizar_avaliacoes === true;

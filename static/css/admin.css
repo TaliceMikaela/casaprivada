@@ -162,6 +162,12 @@
     width: 125px;
   }
 }
+
+/* Garante que elementos restritos não reapareçam por regras de display. */
+.admin-body [hidden] {
+  display: none !important;
+}
+
 /* ==========================================================
    TELA DE CARREGAMENTO
    ========================================================== */
